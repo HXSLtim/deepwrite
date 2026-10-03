@@ -10,8 +10,10 @@ import {
   processingDisplayItems,
   processingItems,
   processingLabel,
+  splitLiveCollapsedItems,
   visibleResponse,
-  workspaceToolLabel
+  workspaceToolLabel,
+  type ProcessingDisplayItem
 } from "./conversationToolPresentation";
 import type { LongWorkspaceProposalItem } from "../composables/useLongWorkspaceProposals";
 
@@ -312,5 +314,110 @@ describe("actionableApprovalItems", () => {
       status: "completed"
     };
     expect(actionableApprovalItems(emptyMessage, [])).toEqual([]);
+  });
+});
+
+describe("splitLiveCollapsedItems", () => {
+  const completedTool = tool("done-1", "completed");
+  const runningWriteTool = tool("write-running", "running");
+  const errorTool = tool("failed-1", "error");
+
+  function pendingEditCard(): ProcessingDisplayItem {
+    return {
+      id: "edit:pending-edit",
+      type: "edit-proposal",
+      createdAt: startedAt,
+      toolCallIds: ["edit-tool-1"],
+      canDiscard: true,
+      proposal: {
+        id: "pending-edit",
+        runId: "run-approve",
+        workspaceId: "short-book-1",
+        stageId: "plot_design",
+        documentId: "plot_design",
+        title: "剧情设计",
+        summary: "调整剧情设计",
+        status: "pending",
+        baseRevision: "before",
+        proposedRevision: "after",
+        toolCallIds: ["edit-tool-1"],
+        additions: 2,
+        deletions: 1,
+        hunks: [],
+        createdAt: startedAt,
+        updatedAt: startedAt,
+        discardSnapshot: { beforeText: "修改前", beforeTitle: "剧情设计" }
+      }
+    };
+  }
+
+  it("folds completed tool groups and keeps running/error/write items active", () => {
+    const items: ProcessingDisplayItem[] = [
+      {
+        id: "g1",
+        type: "tool-group",
+        tools: [completedTool, tool("done-2", "completed")]
+      },
+      { id: "t1", type: "tool", tool: runningWriteTool },
+      { id: "g2", type: "tool-group", tools: [completedTool, errorTool] },
+      {
+        id: "s1",
+        type: "subagent",
+        toolCallId: "spawn-1",
+        runs: [],
+        createdAt: startedAt
+      }
+    ];
+    const split = splitLiveCollapsedItems(items);
+    expect(split.collapsed.map((item) => item.id)).toEqual(["g1"]);
+    expect(split.active.map((item) => item.id)).toEqual(["t1", "g2", "s1"]);
+  });
+
+  it("folds settled live work groups but keeps running or failed ones active", () => {
+    const settledGroup: ProcessingDisplayItem = {
+      id: "work:1",
+      type: "work-group",
+      running: false,
+      items: [
+        {
+          id: "think-1",
+          type: "thinking",
+          content: "思考",
+          createdAt: startedAt
+        },
+        { id: "tools-1", type: "tool-group", tools: [completedTool] }
+      ]
+    };
+    const runningGroup: ProcessingDisplayItem = {
+      id: "work:2",
+      type: "work-group",
+      running: true,
+      items: [{ id: "tools-2", type: "tool-group", tools: [completedTool] }]
+    };
+    const failedGroup: ProcessingDisplayItem = {
+      id: "work:3",
+      type: "work-group",
+      running: false,
+      items: [{ id: "tools-3", type: "tool-group", tools: [errorTool] }]
+    };
+    const split = splitLiveCollapsedItems([
+      settledGroup,
+      runningGroup,
+      failedGroup
+    ]);
+    expect(split.collapsed.map((item) => item.id)).toEqual(["work:1"]);
+    expect(split.active.map((item) => item.id)).toEqual(["work:2", "work:3"]);
+  });
+
+  it("keeps approval cards active", () => {
+    const completedGroup: ProcessingDisplayItem = {
+      id: "g1",
+      type: "tool-group",
+      tools: [completedTool]
+    };
+    const split = splitLiveCollapsedItems([pendingEditCard(), completedGroup]);
+    expect(split.active.some((item) => item.type === "edit-proposal")).toBe(
+      true
+    );
   });
 });

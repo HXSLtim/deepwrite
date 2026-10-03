@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { createScopedTranslator, locale } from "../i18n";
-import { onBeforeUnmount, ref } from "vue";
-import { provideConversationDisclosureScope } from "../composables/conversationDisclosureState";
+import { onBeforeUnmount, ref, watch } from "vue";
+import {
+  provideConversationDisclosureScope,
+  useConversationDisclosureScopeClear
+} from "../composables/conversationDisclosureState";
 import type { LongWorkspaceIndexSnapshot } from "@deepwrite/contracts";
 import type { LongWorkspaceProposalItem } from "../composables/useLongWorkspaceProposals";
 import { formatFileSize } from "../composables/useConversationAttachments";
@@ -65,6 +68,19 @@ const emit = defineEmits<{
 }>();
 
 provideConversationDisclosureScope(() => props.message.id);
+
+const clearMessageDisclosureScope = useConversationDisclosureScopeClear(
+  () => props.message.id
+);
+
+watch(
+  () => props.message.status === "streaming",
+  (streaming, was) => {
+    if (was && !streaming) {
+      clearMessageDisclosureScope();
+    }
+  }
+);
 const copied = ref(false);
 let copiedTimer: number | undefined;
 

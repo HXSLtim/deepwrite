@@ -140,6 +140,51 @@ export function actionableApprovalItems(
   );
 }
 
+function workGroupTools(group: WorkGroupDisplayItem): AgentToolTrace[] {
+  return group.items.flatMap((member) =>
+    member.type === "tool"
+      ? [member.tool]
+      : member.type === "tool-group"
+        ? member.tools
+        : []
+  );
+}
+
+export interface LiveCollapsedSplit<
+  Item extends ProcessingDisplayItem = ProcessingDisplayItem
+> {
+  collapsed: Item[];
+  active: Item[];
+}
+
+/**
+ * streaming（live）块内：已完成的工具/工具组折进 collapsed，
+ * 由渲染层收成"已完成 N 项"一行；运行中、失败、子代理、
+ * 审批卡一律保持 active 平铺。
+ */
+export function splitLiveCollapsedItems<Item extends ProcessingDisplayItem>(
+  items: Item[]
+): LiveCollapsedSplit<Item> {
+  const collapsed: Item[] = [];
+  const active: Item[] = [];
+  for (const item of items) {
+    if (
+      (item.type === "work-group" &&
+        !item.running &&
+        workGroupTools(item).every((tool) => tool.status === "completed")) ||
+      (item.type === "tool-group" &&
+        item.tools.length > 0 &&
+        item.tools.every((tool) => tool.status === "completed")) ||
+      (item.type === "tool" && item.tool.status === "completed")
+    ) {
+      collapsed.push(item);
+    } else {
+      active.push(item);
+    }
+  }
+  return { collapsed, active };
+}
+
 export function liveTimelineItems(
   message: ChatMessage,
   longProposalItems: readonly LongWorkspaceProposalItem[]
