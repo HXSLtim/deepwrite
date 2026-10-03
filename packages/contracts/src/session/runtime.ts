@@ -14,7 +14,8 @@ import {
 
 export const AgentWriteApprovalModeSchema = z.enum([
   "request-approval",
-  "auto-approve"
+  "auto-approve",
+  "auto-approve-all"
 ]);
 export type AgentWriteApprovalMode = z.infer<
   typeof AgentWriteApprovalModeSchema

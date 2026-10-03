@@ -24,7 +24,8 @@ export function maxTextAttachmentCharactersForBudget(
 
 export const GeneralPermissionModeSchema = z.enum([
   "request-approval",
-  "auto-approve"
+  "auto-approve",
+  "auto-approve-all"
 ]);
 export type GeneralPermissionMode = z.infer<typeof GeneralPermissionModeSchema>;
 
