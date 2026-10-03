@@ -55,7 +55,7 @@ describe("useProposalCoordinator extraction boundary", () => {
       "function resumeRecoveredAutomaticEditsIfNeeded("
     );
     expect(catalogProjectionSource).toContain(
-      'proposal.approvalMode === "auto-approve"'
+      "isAutoApprovalMode(proposal.approvalMode)"
     );
     expect(catalogProjectionSource).toContain('proposal.status === "pending"');
   });
