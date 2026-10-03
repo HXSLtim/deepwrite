@@ -19,6 +19,7 @@ import { longBookIdFromResourceId } from "../types/longWorkspace";
 import type { EditorDraftState, WorkspaceDocument } from "../types/workspace";
 import { reconcileCatalogRecoveryDrafts } from "../utils/catalogDraftRecoveryReconciliation";
 import { hasDirtyLegacyDraftRecoveries } from "../utils/legacyDraftRecoveryDetection";
+import { isAutoApprovalMode } from "../utils/approvalMode";
 import type { LegacyDraftRecoveryMigrationResult } from "../utils/legacyDraftRecovery";
 
 const t = createScopedTranslator(
@@ -464,7 +465,7 @@ export function useCatalogWorkspaceProjectionCoordinator(
         conversation.messages.value.some((message) =>
           message.editProposals?.some(
             (proposal) =>
-              proposal.approvalMode === "auto-approve" &&
+              isAutoApprovalMode(proposal.approvalMode) &&
               proposal.status === "pending"
           )
         )

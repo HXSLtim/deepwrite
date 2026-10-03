@@ -6,6 +6,7 @@ import type {
   SystemEventEnvelope
 } from "@deepwrite/contracts";
 import { createShortWorkspaceContentRevision } from "@deepwrite/contracts";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import type { AgentEditProposal } from "../../types/conversation";
 import { agentEditProposalId } from "../../utils/agentEditReview";
 import { buildAgentTextDiff } from "../../utils/agentTextDiff";
@@ -152,7 +153,7 @@ export function createPlotStructureProposalLane(input: PlotStructureLaneInput) {
       plotStructureTarget: { mutation }
     };
     conversation.upsertEditProposal(event.payload.runId, proposal);
-    if (approvalMode === "auto-approve") {
+    if (isAutoApprovalMode(approvalMode)) {
       input.queueAgentEdit(
         conversation,
         event.payload.sessionId,

@@ -6,6 +6,7 @@ import type {
 } from "./types";
 import { isRecord, validDate } from "./shared";
 import { parseStoredMessage } from "./parse";
+import { isAgentApprovalModeValue } from "../../utils/approvalMode";
 
 /** Destructive migration is allowed only when every original record is readable. */
 export function isCompletePersistenceSnapshot(value: unknown): boolean {
@@ -30,8 +31,7 @@ export function parsePersistenceRecord(
     !validDate(value.createdAt) ||
     !validDate(value.updatedAt) ||
     (value.approvalMode !== undefined &&
-      value.approvalMode !== "request-approval" &&
-      value.approvalMode !== "auto-approve") ||
+      !isAgentApprovalModeValue(value.approvalMode)) ||
     (value.draft !== undefined && typeof value.draft !== "string") ||
     (value.temperature !== undefined &&
       (typeof value.temperature !== "number" ||
@@ -47,10 +47,9 @@ export function parsePersistenceRecord(
     sessionId: value.sessionId,
     messages,
     draft: typeof value.draft === "string" ? value.draft : "",
-    approvalMode:
-      value.approvalMode === "auto-approve"
-        ? "auto-approve"
-        : "request-approval",
+    approvalMode: isAgentApprovalModeValue(value.approvalMode)
+      ? value.approvalMode
+      : "request-approval",
     createdAt: value.createdAt,
     updatedAt: value.updatedAt,
     temperature:

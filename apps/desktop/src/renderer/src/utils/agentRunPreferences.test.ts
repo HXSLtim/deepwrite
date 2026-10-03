@@ -270,4 +270,23 @@ describe("agent run preferences", () => {
     });
     expect(parseAgentRunPreferences("not-json")).toEqual({});
   });
+
+  it("keeps auto-approve-all as a persisted run preference", () => {
+    expect(
+      parseAgentRunPreferences(
+        JSON.stringify({
+          "book:book-auto-all": {
+            temperature: 0.7,
+            approvalMode: "auto-approve-all"
+          }
+        })
+      )
+    ).toEqual({
+      "book:book-auto-all": {
+        temperature: 0.7,
+        approvalMode: "auto-approve-all",
+        agentTeamMode: "normal"
+      }
+    });
+  });
 });

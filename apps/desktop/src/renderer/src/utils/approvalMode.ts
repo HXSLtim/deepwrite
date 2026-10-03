@@ -1,5 +1,15 @@
 import type { AgentApprovalMode } from "../types/conversation";
 
+export function isAgentApprovalModeValue(
+  value: unknown
+): value is AgentApprovalMode {
+  return (
+    value === "request-approval" ||
+    value === "auto-approve" ||
+    value === "auto-approve-all"
+  );
+}
+
 export function isAutoApprovalMode(
   mode: AgentApprovalMode | undefined
 ): mode is Exclude<AgentApprovalMode, "request-approval"> {

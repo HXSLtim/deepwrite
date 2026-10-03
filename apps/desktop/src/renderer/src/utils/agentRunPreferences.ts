@@ -4,6 +4,7 @@ import {
   type ThinkingLevel
 } from "@deepwrite/contracts";
 import type { AgentApprovalMode } from "../types/conversation";
+import { isAgentApprovalModeValue } from "./approvalMode";
 import type { WorkspaceDocument } from "../types/workspace";
 
 export const AGENT_RUN_PREFERENCES_STORAGE_KEY =
@@ -107,8 +108,7 @@ function parseAgentRunPreference(
     !Number.isFinite(value.temperature) ||
     value.temperature < 0 ||
     value.temperature > 2 ||
-    (value.approvalMode !== "request-approval" &&
-      value.approvalMode !== "auto-approve") ||
+    !isAgentApprovalModeValue(value.approvalMode) ||
     (value.agentTeamMode !== undefined &&
       value.agentTeamMode !== "normal" &&
       value.agentTeamMode !== "team")

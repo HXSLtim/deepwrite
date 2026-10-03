@@ -692,4 +692,46 @@ describe("agent conversation controller: snapshot-persistence", () => {
     });
     restored.dispose({ clearPersistence: true });
   });
+
+  it("restores auto-approve-all conversations and proposals after restart", async () => {
+    const conversation = storedConversation(
+      "session-auto-approve-all",
+      "2026-08-14T02:00:00.000Z",
+      "重启后仍保持全自动审批"
+    );
+    conversation.approvalMode = "auto-approve-all";
+    conversation.messages = [
+      conversation.messages[0]!,
+      {
+        id: "assistant-auto-approve-all",
+        role: "assistant",
+        content: "已提交全自动保存队列",
+        createdAt: "2026-08-14T02:00:01.000Z",
+        status: "completed",
+        runId: "run_auto_all",
+        editProposals: [
+          createEditProposal({
+            id: "proposal_auto_all",
+            runId: "run_auto_all",
+            approvalMode: "auto-approve-all"
+          })
+        ]
+      }
+    ];
+    const controller = useAgentConversation({ api: () => undefined });
+
+    await expect(
+      controller.restorePersistenceSnapshot({
+        version: 1,
+        activeSessionId: "session-auto-approve-all",
+        conversations: [conversation]
+      })
+    ).resolves.toBe(true);
+
+    expect(controller.approvalMode.value).toBe("auto-approve-all");
+    const restoredProposal = controller.messages.value[1]?.editProposals?.[0];
+    expect(restoredProposal?.approvalMode).toBe("auto-approve-all");
+    expect(restoredProposal?.id).toBe("proposal_auto_all");
+    controller.dispose();
+  });
 });

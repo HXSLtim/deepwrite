@@ -4,6 +4,7 @@ import type {
   AgentTextDiffHunk
 } from "../../types/conversation";
 import { isRecord, nonnegativeInteger, validDate } from "./shared";
+import { isAgentApprovalModeValue } from "../../utils/approvalMode";
 import {
   parseStoredDiscardSnapshot,
   parseStoredDiscardState
@@ -69,8 +70,7 @@ export function parseStoredEditProposal(
     (value.generation !== undefined &&
       (!nonnegativeInteger(value.generation) || value.generation < 1)) ||
     (value.approvalMode !== undefined &&
-      value.approvalMode !== "request-approval" &&
-      value.approvalMode !== "auto-approve") ||
+      !isAgentApprovalModeValue(value.approvalMode)) ||
     (value.predecessorProposalId !== undefined &&
       typeof value.predecessorProposalId !== "string") ||
     (!isLongFormProposalCandidate &&

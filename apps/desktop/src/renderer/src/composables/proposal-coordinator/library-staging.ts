@@ -5,6 +5,7 @@ import type { ProposalCoordinatorContext } from "../useProposalCoordinator";
 import type { AgentConversationController } from "../useAgentConversation";
 import type { AgentEditProposal } from "../../types/conversation";
 import type { WorkspaceDocument } from "../../types/workspace";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import {
   createShortWorkspaceContentRevision,
   type SystemEventEnvelope
@@ -242,7 +243,7 @@ export function createLibraryProposalStager(
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,

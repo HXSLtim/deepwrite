@@ -14,6 +14,7 @@ import type { Ref } from "vue";
 import { locale, setAppLanguage, createScopedTranslator } from "../i18n";
 import { takeInitialGeneralSettings } from "../i18n/bootstrap";
 import { saveGeneralPreferences } from "../utils/generalPreferences";
+import { isAutoApprovalMode } from "../utils/approvalMode";
 
 const t = createScopedTranslator("foundation");
 
@@ -178,7 +179,7 @@ export function useGeneralSettingsCoordinator(
     applyLocalPatch({ permissionMode });
     options.applyApprovalMode(permissionMode);
     queueSave();
-    if (permissionMode === "auto-approve") {
+    if (isAutoApprovalMode(permissionMode)) {
       queueMicrotask(() => {
         if (!disposed) options.resumeAutomaticAgentEdits();
       });
