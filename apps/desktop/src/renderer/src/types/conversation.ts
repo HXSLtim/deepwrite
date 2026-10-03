@@ -15,7 +15,8 @@ import type {
   ShortWorkspaceStageId
 } from "@deepwrite/contracts";
 
-export type AgentApprovalMode = "request-approval" | "auto-approve";
+export type AgentApprovalMode =
+  "request-approval" | "auto-approve" | "auto-approve-all";
 
 export interface AgentTextDiffLine {
   type: "context" | "addition" | "deletion";
