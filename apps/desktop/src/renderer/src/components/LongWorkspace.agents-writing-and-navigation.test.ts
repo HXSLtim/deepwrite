@@ -194,7 +194,7 @@ describe("long-form renderer vertical slice: agents-writing-and-navigation", () 
     expect(proposalSource).toContain("long.continuity_file_proposal");
     expect(proposalSource).not.toContain("查看提交内容");
     expect(proposalSource).not.toContain("本章六类连续性摘要");
-    expect(proposalSource).toContain('item.approvalMode === "auto-approve"');
+    expect(proposalSource).toContain("isAutoApprovalMode(item.approvalMode)");
     expect(proposalSource).toContain("autosaving");
     expect(proposalRuntimeSource).toContain(
       "approvalModeForEvent: proposalApprovalMode"

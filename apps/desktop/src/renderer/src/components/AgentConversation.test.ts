@@ -475,8 +475,14 @@ describe("AgentConversation edit proposal placement", () => {
       disclosureStart,
       disclosureEnd
     );
-    for (const timeline of [liveTimeline, historyTimeline]) {
-      const loopStart = timeline.indexOf('v-for="item in block.items"');
+    const timelineLoops = [
+      'v-for="item in liveSplits.get(block.id)?.active ?? block.items"',
+      'v-for="item in block.items"'
+    ];
+    for (const [timeline, loopSource] of [liveTimeline, historyTimeline].map(
+      (timeline, index) => [timeline, timelineLoops[index]] as const
+    )) {
+      const loopStart = timeline.indexOf(loopSource);
       const workGroupStart = timeline.indexOf(
         "<ConversationWorkGroup",
         loopStart
@@ -491,6 +497,7 @@ describe("AgentConversation edit proposal placement", () => {
       expect(timeline).toContain("v-else-if=\"item.type === 'subagent'\"");
       expect(timeline).toContain(':runs="item.runs"');
     }
+    expect(processingTimelineSource).toContain("live-collapsed");
     expect(processingTimelineSource.slice(disclosureEnd)).not.toContain(
       "<SubagentRunList"
     );
