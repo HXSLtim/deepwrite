@@ -38,6 +38,7 @@ import {
   resolveAgentEditorMutationText
 } from "../utils/agentEditReview";
 import { buildAgentTextDiff } from "../utils/agentTextDiff";
+import { isAutoApprovalMode } from "../utils/approvalMode";
 import {
   captureWorkspaceDocumentBaselines,
   type WorkspaceDocumentBaseline
@@ -950,7 +951,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       for (const message of conversation.messages.value) {
         for (const proposal of message.editProposals ?? []) {
           if (
-            proposal.approvalMode !== "auto-approve" ||
+            !isAutoApprovalMode(proposal.approvalMode) ||
             proposal.status !== "pending" ||
             !canReviewAgentEditDuringRun(proposal)
           ) {
@@ -1112,7 +1113,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1200,7 +1201,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1284,7 +1285,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1369,7 +1370,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1566,7 +1567,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
           provisionalExpertSection: false
         };
         sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-        if (!noChanges && runApprovalMode === "auto-approve") {
+        if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
           queueAgentEdit(
             sourceConversation,
             event.payload.sessionId,
@@ -1708,7 +1709,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         provisionalExpertSection: true
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (!noChanges && runApprovalMode === "auto-approve") {
+      if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1831,7 +1832,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
         provisionalCharacterItemId: mutationTarget.itemId
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1972,7 +1973,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       )
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,
@@ -2061,7 +2062,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (runApprovalMode === "auto-approve") {
+    if (isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,
@@ -2175,7 +2176,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,
@@ -2301,7 +2302,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,
@@ -2386,7 +2387,7 @@ export function useProposalCoordinator(context: ProposalCoordinatorContext) {
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,

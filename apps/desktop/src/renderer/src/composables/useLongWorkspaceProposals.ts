@@ -2,6 +2,10 @@ import { formatError, getErrorCode } from "../i18n/errors";
 import { createScopedTranslator } from "../i18n";
 import { ref, type Ref } from "vue";
 import {
+  isAutoApprovalMode,
+  shouldForceManualReview
+} from "../utils/approvalMode";
+import {
   LongMutationProposalEventEnvelopeSchema,
   LongWorkspaceOperationBatchSchema,
   createEnvelope,
@@ -899,9 +903,12 @@ export function useLongWorkspaceProposals(
       if (
         isBatchProposal(current.event) &&
         current.preview &&
-        longWorkspaceOperationsRequireImpactConfirmation(
-          (current.effectiveBatch ?? current.event.payload.batch).operations,
-          current.preview.confirmation
+        shouldForceManualReview(
+          current.approvalMode,
+          longWorkspaceOperationsRequireImpactConfirmation(
+            (current.effectiveBatch ?? current.event.payload.batch).operations,
+            current.preview.confirmation
+          )
         )
       ) {
         updateItem(event.payload.bookId, event.id, {
@@ -961,7 +968,7 @@ export function useLongWorkspaceProposals(
       ...itemsForBook(event.payload.bookId),
       item
     ]);
-    if (approvalMode === "auto-approve") {
+    if (isAutoApprovalMode(approvalMode)) {
       await processAutomaticProposal(event, true);
     } else if (
       event.type === "long.mutation_proposal" ||
@@ -1079,7 +1086,7 @@ export function useLongWorkspaceProposals(
       return;
     }
     if (
-      item.approvalMode === "auto-approve" &&
+      isAutoApprovalMode(item.approvalMode) &&
       (item.event.type === "long.mutation_proposal" ||
         isContentFileProposal(item.event))
     ) {
@@ -1089,7 +1096,7 @@ export function useLongWorkspaceProposals(
     await previewMutation(item);
     const current = currentItem(bookId, eventId);
     if (
-      current?.approvalMode === "auto-approve" &&
+      isAutoApprovalMode(current?.approvalMode) &&
       current.status === "ready"
     ) {
       await processAutomaticProposal(current.event, false);
@@ -1264,7 +1271,7 @@ export function useLongWorkspaceProposals(
         (candidate) =>
           candidate.status === "waiting" && isBatchProposal(candidate.event)
       )) {
-        if (waiting.approvalMode === "auto-approve") {
+        if (isAutoApprovalMode(waiting.approvalMode)) {
           queueMicrotask(() => {
             void processAutomaticProposal(waiting.event, true);
           });
@@ -1323,7 +1330,7 @@ export function useLongWorkspaceProposals(
           candidate.status === "waiting" && isBatchProposal(candidate.event)
       )) {
         queueMicrotask(() => {
-          if (waiting.approvalMode === "auto-approve") {
+          if (isAutoApprovalMode(waiting.approvalMode)) {
             void processAutomaticProposal(waiting.event, true);
           } else {
             void previewMutation(waiting);

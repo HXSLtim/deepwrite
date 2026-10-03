@@ -69,11 +69,9 @@ function controllerFixture(name: string) {
     selectedModelId.value = selected?.id ?? "";
     thinkingLevel.value = selected?.defaultThinkingLevel ?? "medium";
   });
-  const selectApprovalMode = vi.fn(
-    (mode: "request-approval" | "auto-approve") => {
-      approvalMode.value = mode;
-    }
-  );
+  const selectApprovalMode = vi.fn((mode: AgentApprovalMode) => {
+    approvalMode.value = mode;
+  });
   const selectAgentTeamMode = vi.fn((mode: "normal" | "team") => {
     agentTeamMode.value = mode;
   });

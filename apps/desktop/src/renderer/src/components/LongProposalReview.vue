@@ -8,6 +8,7 @@ import type {
 } from "@deepwrite/contracts";
 import type { LongWorkspaceProposalItem } from "../composables/useLongWorkspaceProposals";
 import { buildAgentTextDiff } from "../utils/agentTextDiff";
+import { isAutoApprovalMode } from "../utils/approvalMode";
 import AppIcon from "./AppIcon.vue";
 import LongLedgerFinalizationCard from "./LongLedgerFinalizationCard.vue";
 import LongProposalImpactDetails from "./LongProposalImpactDetails.vue";
@@ -250,7 +251,7 @@ function proposalTitle(item: LongWorkspaceProposalItem): string {
 
 function proposalAction(item: LongWorkspaceProposalItem): string {
   if (item.status === "submitting") return t("processing");
-  if (item.approvalMode === "auto-approve" && item.status === "error") {
+  if (isAutoApprovalMode(item.approvalMode) && item.status === "error") {
     return t("retryAutosave");
   }
   if (item.status === "error" && item.event.type !== "long.mutation_proposal") {
@@ -279,24 +280,24 @@ function proposalStatusText(item: LongWorkspaceProposalItem): string {
   if (item.status === "accepted") return t("accepted");
   if (item.status === "waiting") return t("waitingForPrerequisiteFiles");
   if (item.status === "previewing") {
-    return item.approvalMode === "auto-approve"
+    return isAutoApprovalMode(item.approvalMode)
       ? t("automaticPreview")
       : t("previewing");
   }
   if (item.status === "submitting") {
-    return item.approvalMode === "auto-approve"
+    return isAutoApprovalMode(item.approvalMode)
       ? t("autosaving")
       : t("processingLabel");
   }
   if (item.status === "error") {
     if (item.errorPhase === "preview") return t("validationFailed");
-    return item.approvalMode === "auto-approve"
+    return isAutoApprovalMode(item.approvalMode)
       ? t("autosaveFailed")
       : item.errorRetryable === false
         ? t("cannotApply")
         : t("failedToApply");
   }
-  return item.approvalMode === "auto-approve"
+  return isAutoApprovalMode(item.approvalMode)
     ? t("awaitingAutosave")
     : t("awaitingConfirmation");
 }
@@ -322,7 +323,7 @@ function contentProposalStatusLabel(item: LongWorkspaceProposalItem): string {
   if (item.status === "waiting") return t("waitingForPrerequisiteFiles");
   if (item.status === "previewing") return t("validating");
   if (item.status === "submitting") return t("applying");
-  return item.approvalMode === "auto-approve"
+  return isAutoApprovalMode(item.approvalMode)
     ? t("awaitingAutosaveLabel")
     : t("awaitingReview");
 }
@@ -344,7 +345,7 @@ function contentProposalDiffStats(item: LongWorkspaceProposalItem): {
 
 function contentProposalStatusMessage(item: LongWorkspaceProposalItem): string {
   if (item.status === "accepted") {
-    return item.approvalMode === "auto-approve"
+    return isAutoApprovalMode(item.approvalMode)
       ? t("automaticallyApprovedAndSavedToLocalMarkdown")
       : t("changesAppliedAndSavedLocally");
   }
@@ -363,7 +364,7 @@ function contentProposalStatusMessage(item: LongWorkspaceProposalItem): string {
   if (item.status === "submitting") {
     return t("applyingAndSavingChanges");
   }
-  return item.approvalMode === "auto-approve"
+  return isAutoApprovalMode(item.approvalMode)
     ? t("addedToTheAutosaveQueue")
     : t("acceptToApplyToTheCorrespondingMarkdownFilesAnd");
 }
@@ -371,7 +372,7 @@ function contentProposalStatusMessage(item: LongWorkspaceProposalItem): string {
 function showContentProposalActions(item: LongWorkspaceProposalItem): boolean {
   return (
     item.status !== "accepted" &&
-    (item.approvalMode !== "auto-approve" || item.status === "error")
+    (!isAutoApprovalMode(item.approvalMode) || item.status === "error")
   );
 }
 
@@ -430,7 +431,7 @@ function structureProposalStatusMessage(
   if (item.status === "submitting") {
     return t("applyingStructureChanges");
   }
-  return item.approvalMode === "auto-approve"
+  return isAutoApprovalMode(item.approvalMode)
     ? t("addedToTheAutosaveQueue")
     : t("acceptToApplyToThisBookSStructureAnd");
 }
@@ -713,7 +714,7 @@ function diffLineMark(type: "context" | "addition" | "deletion"): string {
               v-if="
                 isStructureProposalItem(item)
                   ? item.status !== 'accepted' &&
-                    (item.approvalMode !== 'auto-approve' ||
+                    (!isAutoApprovalMode(item.approvalMode) ||
                       item.status === 'error')
                   : showContentProposalActions(item)
               "
@@ -758,7 +759,7 @@ function diffLineMark(type: "context" | "addition" | "deletion"): string {
             item.event.type !== 'long.ledger_commit_proposal' &&
             !usesEditProposalSurface(item) &&
             item.status !== 'accepted' &&
-            (item.approvalMode !== 'auto-approve' || item.status === 'error')
+            (!isAutoApprovalMode(item.approvalMode) || item.status === 'error')
           "
         >
           <button

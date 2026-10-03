@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { SystemEventEnvelopeSchema } from "@deepwrite/contracts/system";
 import {
+  type AgentWriteApprovalMode,
   createEnvelope,
   longCharacterCoreProfileFileId,
   longCharacterFilePath,
@@ -369,7 +370,7 @@ function textFilesLedgerEvent() {
 
 function harness(
   acceptsEvent = true,
-  approvalMode: "request-approval" | "auto-approve" = "request-approval"
+  approvalMode: AgentWriteApprovalMode = "request-approval"
 ) {
   const previewOperations = vi.fn<
     LongWorkspaceRendererApi["previewOperations"]
