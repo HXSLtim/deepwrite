@@ -10,3 +10,4 @@ docs/
 *.md
 LICENSE
 pnpm-lock.yaml
+.remember/
