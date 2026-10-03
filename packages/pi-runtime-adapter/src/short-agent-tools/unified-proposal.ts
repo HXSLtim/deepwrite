@@ -19,7 +19,8 @@ export function shortProposalSummary(
   input: BuildWritingWorkspaceToolsInput,
   summary: string
 ): string {
-  if (input.writeApprovalMode !== "auto-approve") return summary;
+  if ((input.writeApprovalMode ?? "request-approval") === "request-approval")
+    return summary;
   return summary.includes("等待用户审阅")
     ? summary.replace(
         /，?等待用户审阅。?/u,

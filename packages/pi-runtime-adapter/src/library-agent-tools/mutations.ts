@@ -19,7 +19,7 @@ export function approvalSummary(
   summary: string,
   approvalMode: AgentWriteApprovalMode | undefined
 ): string {
-  return approvalMode === "auto-approve"
+  return (approvalMode ?? "request-approval") !== "request-approval"
     ? summary.replace(
         "，等待用户审阅。",
         "，已提交实时自动保存队列；以审批卡的落盘状态为准。"

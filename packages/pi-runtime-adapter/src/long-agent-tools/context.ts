@@ -34,7 +34,7 @@ export function longProposalResultSummary(
   input: BuildLongWorkspaceToolsInput,
   pendingSummary: string
 ): string {
-  return input.writeApprovalMode === "auto-approve"
+  return (input.writeApprovalMode ?? "request-approval") !== "request-approval"
     ? pendingSummary.replace(
         /等待客户端审阅。$/,
         "已提交实时自动保存队列；以审批卡的落盘状态为准。"
