@@ -51,7 +51,7 @@ function buildWorkspaceAgentSystemPrompt(
   const libraryWorkspace = input.workspaceContext?.libraryWorkspace;
   if (libraryProfile && libraryWorkspace) {
     const writeBoundary =
-      input.writeApprovalMode === "auto-approve"
+      (input.writeApprovalMode ?? "request-approval") !== "request-approval"
         ? "写入工具只提交资料库条目或库介绍变更；提案生成后客户端会立即加入后台串行队列、自动批准并尝试保存。智能体可以继续当前回复，但在审批卡确认成功前不得声称已经保存成功。"
         : "写入工具提交待用户审阅的资料库条目或库介绍变更；用户接受后客户端才会保存到本地文件，当前回复不得提前声称已经保存。";
     return [

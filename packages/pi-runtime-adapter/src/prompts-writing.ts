@@ -137,7 +137,7 @@ function writingRuntimeSystemRequirements(
       : input.workspaceContext!.shortWorkspace!;
   const workspaceKind = workspaceType === "script" ? "剧本" : "短篇";
   const writeBoundary =
-    input.writeApprovalMode === "auto-approve"
+    (input.writeApprovalMode ?? "request-approval") !== "request-approval"
       ? "工具只形成文本变更提案；提案会进入后台自动保存队列，但审批卡确认成功前不得声称已保存。"
       : "工具只形成待用户审阅的文本变更提案；用户接受并保存前不得声称已写入本地文件。";
   const crossStageBoundary =
