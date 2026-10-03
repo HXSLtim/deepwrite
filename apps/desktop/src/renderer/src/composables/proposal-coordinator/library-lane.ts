@@ -1,4 +1,5 @@
 import { formatError } from "../../i18n/errors";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import { createScopedTranslator } from "../../i18n";
 import {
   MaterialStageIdSchema,
@@ -397,7 +398,7 @@ export function createLibraryLane(ctx: ProposalLaneContext) {
       }
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,

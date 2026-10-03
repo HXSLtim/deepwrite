@@ -2,6 +2,7 @@ import { formatError } from "../../i18n/errors";
 import { createScopedTranslator } from "../../i18n";
 import type { AgentEditProposal } from "../../types/conversation";
 import type { AgentConversationController } from "../useAgentConversation";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import {
   createShortWorkspaceContentRevision,
   type CharacterStructureMutation
@@ -286,7 +287,7 @@ export function createCharacterStructureLane(ctx: ProposalLaneContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,

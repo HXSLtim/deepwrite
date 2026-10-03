@@ -8,6 +8,8 @@ export default {
   approvalCardsForThisTurn: "本轮审批卡片",
   acceptAllApprovals: "全部接受",
   rejectAllApprovals: "全部拒绝",
+  queuedAcceptancesValue: "已提交 {arg0} 项接受",
+  queuedRejectionsValue: "已提交 {arg0} 项拒绝",
   editAndResend: "修改并重新发送",
   copied: "已复制",
   copyReply: "复制回复",

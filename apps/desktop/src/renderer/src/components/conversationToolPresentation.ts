@@ -136,7 +136,8 @@ export function actionableApprovalItems(
   return approvalItemsForMessage(message, longProposalItems).filter((item) =>
     item.type === "edit-proposal"
       ? item.proposal.status === "pending"
-      : item.item.status === "ready"
+      : item.item.status === "ready" &&
+        item.item.event.type !== "long.ledger_commit_proposal"
   );
 }
 

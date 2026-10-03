@@ -1,4 +1,5 @@
 import { formatError } from "../../i18n/errors";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import { createScopedTranslator } from "../../i18n";
 import {
   createShortWorkspaceContentRevision,
@@ -119,7 +120,7 @@ export function createApplyReview(ctx: ProposalLaneContext) {
       for (const message of conversation.messages.value) {
         for (const proposal of message.editProposals ?? []) {
           if (
-            proposal.approvalMode !== "auto-approve" ||
+            !isAutoApprovalMode(proposal.approvalMode) ||
             proposal.status !== "pending" ||
             !canReviewAgentEditDuringRun(proposal)
           ) {
@@ -349,7 +350,7 @@ export function createApplyReview(ctx: ProposalLaneContext) {
           provisionalExpertSection: false
         };
         sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-        if (!noChanges && runApprovalMode === "auto-approve") {
+        if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
           queueAgentEdit(
             sourceConversation,
             event.payload.sessionId,
@@ -497,7 +498,7 @@ export function createApplyReview(ctx: ProposalLaneContext) {
         provisionalExpertSection: true
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (!noChanges && runApprovalMode === "auto-approve") {
+      if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -622,7 +623,7 @@ export function createApplyReview(ctx: ProposalLaneContext) {
         provisionalCharacterItemId: mutationTarget.itemId
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -761,7 +762,7 @@ export function createApplyReview(ctx: ProposalLaneContext) {
       )
     };
     sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-    if (!noChanges && runApprovalMode === "auto-approve") {
+    if (!noChanges && isAutoApprovalMode(runApprovalMode)) {
       queueAgentEdit(
         sourceConversation,
         event.payload.sessionId,

@@ -1,4 +1,5 @@
 import type { AgentApprovalMode } from "../types/conversation";
+import { isAutoApprovalMode } from "./approvalMode";
 
 type DeepReadonly<T> = T extends (...args: never[]) => unknown
   ? T
@@ -327,7 +328,7 @@ export function failAgentEditProposalCommit<Proposal>(
 export function readyAutomaticAgentEditProposalGeneration<Proposal>(
   lane: AgentEditProposalRevisionLane<Proposal>
 ): number | undefined {
-  if (lane.activeCommit || lane.pending?.approvalMode !== "auto-approve") {
+  if (lane.activeCommit || !isAutoApprovalMode(lane.pending?.approvalMode)) {
     return undefined;
   }
   return lane.pending.generation;

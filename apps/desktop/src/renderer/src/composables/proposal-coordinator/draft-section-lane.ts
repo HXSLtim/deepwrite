@@ -1,4 +1,5 @@
 import { formatError } from "../../i18n/errors";
+import { isAutoApprovalMode } from "../../utils/approvalMode";
 import { createScopedTranslator } from "../../i18n";
 import {
   catalogDraftBodyDocumentId,
@@ -851,7 +852,7 @@ export function createDraftSectionLane(ctx: ProposalLaneContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -935,7 +936,7 @@ export function createDraftSectionLane(ctx: ProposalLaneContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,
@@ -1020,7 +1021,7 @@ export function createDraftSectionLane(ctx: ProposalLaneContext) {
         }
       };
       sourceConversation.upsertEditProposal(event.payload.runId, proposal);
-      if (runApprovalMode === "auto-approve") {
+      if (isAutoApprovalMode(runApprovalMode)) {
         queueAgentEdit(
           sourceConversation,
           event.payload.sessionId,

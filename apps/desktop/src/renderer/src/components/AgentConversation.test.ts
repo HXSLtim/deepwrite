@@ -475,13 +475,14 @@ describe("AgentConversation edit proposal placement", () => {
       disclosureStart,
       disclosureEnd
     );
-    const timelineLoops = [
-      'v-for="item in liveSplits.get(block.id)?.active ?? block.items"',
-      'v-for="item in block.items"'
+    const timelineLoops: readonly [string, string][] = [
+      [
+        liveTimeline,
+        'v-for="item in liveSplits.get(block.id)?.active ?? block.items"'
+      ],
+      [historyTimeline, 'v-for="item in block.items"']
     ];
-    for (const [timeline, loopSource] of [liveTimeline, historyTimeline].map(
-      (timeline, index) => [timeline, timelineLoops[index]] as const
-    )) {
+    for (const [timeline, loopSource] of timelineLoops) {
       const loopStart = timeline.indexOf(loopSource);
       const workGroupStart = timeline.indexOf(
         "<ConversationWorkGroup",

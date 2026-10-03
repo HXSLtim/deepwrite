@@ -8,6 +8,8 @@ export default {
   approvalCardsForThisTurn: "Approval cards for this turn",
   acceptAllApprovals: "Accept all",
   rejectAllApprovals: "Reject all",
+  queuedAcceptancesValue: "Queued {arg0} acceptances",
+  queuedRejectionsValue: "Queued {arg0} rejections",
   editAndResend: "Edit and resend",
   copied: "Copied",
   copyReply: "Copy reply",

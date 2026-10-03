@@ -1,6 +1,8 @@
 export default {
   acceptAllApprovals: "Accept all",
   rejectAllApprovals: "Reject all",
+  queuedAcceptancesValue: "Queued {arg0} acceptances",
+  queuedRejectionsValue: "Queued {arg0} rejections",
   foreshadowingChanges: "Foreshadowing changes",
   worldbuildingReveals: "Worldbuilding reveals",
   currentCharacterState: "Current character state",

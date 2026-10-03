@@ -1,6 +1,8 @@
 export default {
   acceptAllApprovals: "全部接受",
   rejectAllApprovals: "全部拒绝",
+  queuedAcceptancesValue: "已提交 {arg0} 项接受",
+  queuedRejectionsValue: "已提交 {arg0} 项拒绝",
   foreshadowingChanges: "伏笔变化",
   worldbuildingReveals: "世界观揭露",
   currentCharacterState: "人物当前状态",

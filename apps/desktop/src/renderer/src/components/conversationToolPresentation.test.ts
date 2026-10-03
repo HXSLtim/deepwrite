@@ -258,12 +258,15 @@ describe("actionableApprovalItems", () => {
   function longItem(
     eventId: string,
     status: LongWorkspaceProposalItem["status"],
-    timestamp: string
+    timestamp: string,
+    type:
+      | "long.mutation_proposal"
+      | "long.ledger_commit_proposal" = "long.mutation_proposal"
   ): LongWorkspaceProposalItem {
     return {
       event: {
         id: eventId,
-        type: "long.mutation_proposal",
+        type,
         timestamp,
         payload: {
           sessionId: "session-1",
@@ -295,7 +298,13 @@ describe("actionableApprovalItems", () => {
     };
     const longItems = [
       longItem("event_ready", "ready", "2026-01-01T00:00:02.000Z"),
-      longItem("event_accepted", "accepted", "2026-01-01T00:00:05.000Z")
+      longItem("event_accepted", "accepted", "2026-01-01T00:00:05.000Z"),
+      longItem(
+        "event_ledger",
+        "ready",
+        "2026-01-01T00:00:03.000Z",
+        "long.ledger_commit_proposal"
+      )
     ];
 
     const items = actionableApprovalItems(message, longItems);
@@ -351,7 +360,7 @@ describe("splitLiveCollapsedItems", () => {
     };
   }
 
-  it("folds completed tool groups and keeps running/error/write items active", () => {
+  it("folds completed tool groups and keeps running or failed items active", () => {
     const items: ProcessingDisplayItem[] = [
       {
         id: "g1",

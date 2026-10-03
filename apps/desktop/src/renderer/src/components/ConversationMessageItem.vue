@@ -118,10 +118,8 @@ onBeforeUnmount(() => {
 });
 
 function acceptAllApprovals(message: ChatMessage): void {
-  for (const approval of actionableApprovalItems(
-    message,
-    props.longProposalItems
-  )) {
+  const approvals = actionableApprovalItems(message, props.longProposalItems);
+  for (const approval of approvals) {
     if (approval.type === "edit-proposal") {
       emit("reviewEdit", {
         runId: approval.proposal.runId,
@@ -132,13 +130,14 @@ function acceptAllApprovals(message: ChatMessage): void {
       emit("approveLongProposal", approval.item.event.id);
     }
   }
+  if (approvals.length) {
+    uiMessage.success(t("queuedAcceptancesValue", { arg0: approvals.length }));
+  }
 }
 
 function rejectAllApprovals(message: ChatMessage): void {
-  for (const approval of actionableApprovalItems(
-    message,
-    props.longProposalItems
-  )) {
+  const approvals = actionableApprovalItems(message, props.longProposalItems);
+  for (const approval of approvals) {
     if (approval.type === "edit-proposal") {
       emit("reviewEdit", {
         runId: approval.proposal.runId,
@@ -148,6 +147,9 @@ function rejectAllApprovals(message: ChatMessage): void {
     } else {
       emit("rejectLongProposal", approval.item.event.id);
     }
+  }
+  if (approvals.length) {
+    uiMessage.success(t("queuedRejectionsValue", { arg0: approvals.length }));
   }
 }
 </script>

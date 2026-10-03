@@ -3,6 +3,7 @@ import { createScopedTranslator } from "../i18n";
 import { computed } from "vue";
 import type { AgentEditProposal, ChatMessage } from "../types/conversation";
 import { longImpactConfirmationLines } from "../utils/longImpactConfirmation";
+import { isAutoApprovalMode } from "../utils/approvalMode";
 import AppIcon from "./AppIcon.vue";
 import AgentEditProposalDiff from "./AgentEditProposalDiff.vue";
 import ApprovalDiscardButton from "./ApprovalDiscardButton.vue";
@@ -87,7 +88,7 @@ function proposalStatusLabel(): string {
   if (discardLabel) return discardLabel;
   if (
     props.proposal.status === "pending" &&
-    props.proposal.approvalMode === "auto-approve"
+    isAutoApprovalMode(props.proposal.approvalMode)
   ) {
     return t("awaitingAutosave");
   }
@@ -158,7 +159,7 @@ function canReviewProposalWhileStreaming(): boolean {
 
 function showProposalReviewActions(): boolean {
   if (
-    props.proposal.approvalMode === "auto-approve" &&
+    isAutoApprovalMode(props.proposal.approvalMode) &&
     canReviewProposalWhileStreaming() &&
     (props.proposal.status === "pending" ||
       props.proposal.status === "accepting")
@@ -206,7 +207,7 @@ function proposalStatusMessage(): string {
   if (
     props.messageStatus === "streaming" &&
     proposal.status === "pending" &&
-    proposal.approvalMode === "auto-approve" &&
+    isAutoApprovalMode(proposal.approvalMode) &&
     canReviewProposalWhileStreaming()
   ) {
     return t("thisItemIsReadyAndIsEnteringTheAutosave");
@@ -230,7 +231,7 @@ function proposalStatusMessage(): string {
   if (
     props.messageStatus === "streaming" &&
     proposal.status === "pending" &&
-    proposal.approvalMode === "auto-approve"
+    isAutoApprovalMode(proposal.approvalMode)
   ) {
     return t("thisItemIsReadyAndHasBeenAddedTo");
   }

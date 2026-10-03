@@ -9,6 +9,7 @@ import type {
 import type { LongWorkspaceProposalItem } from "../composables/useLongWorkspaceProposals";
 import { buildAgentTextDiff } from "../utils/agentTextDiff";
 import { isAutoApprovalMode } from "../utils/approvalMode";
+import { uiMessage } from "../ui-feedback";
 import AppIcon from "./AppIcon.vue";
 import LongLedgerFinalizationCard from "./LongLedgerFinalizationCard.vue";
 import LongProposalImpactDetails from "./LongProposalImpactDetails.vue";
@@ -50,11 +51,19 @@ const actionableItems = computed(() =>
 );
 
 function acceptAll(): void {
-  for (const item of actionableItems.value) emit("approve", item.event.id);
+  const items = actionableItems.value;
+  for (const item of items) emit("approve", item.event.id);
+  if (items.length) {
+    uiMessage.success(t("queuedAcceptancesValue", { arg0: items.length }));
+  }
 }
 
 function rejectAll(): void {
-  for (const item of actionableItems.value) emit("reject", item.event.id);
+  const items = actionableItems.value;
+  for (const item of items) emit("reject", item.event.id);
+  if (items.length) {
+    uiMessage.success(t("queuedRejectionsValue", { arg0: items.length }));
+  }
 }
 
 type LongContentFileChange = Extract<
