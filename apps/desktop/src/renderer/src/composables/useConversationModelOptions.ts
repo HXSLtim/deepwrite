@@ -161,6 +161,17 @@ export function useConversationModelOptions(options: {
       get description() {
         return t("automaticallyApproveEditsAndSaveThemToTheManuscript");
       }
+    },
+    {
+      value: "auto-approve-all" as const,
+      get label() {
+        return t("approveEverythingAutomatically");
+      },
+      get description() {
+        return t(
+          "automaticallyApproveAllOperationsIncludingDeletionsWhichCannotBeUndone"
+        );
+      }
     }
   ];
   const approvalModeIcon = computed<IconName>(() =>

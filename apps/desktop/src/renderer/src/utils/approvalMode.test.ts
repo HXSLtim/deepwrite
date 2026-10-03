@@ -17,6 +17,7 @@ describe("shouldForceManualReview", () => {
   it("forces review for impact-confirmed proposals under plain auto-approve", () => {
     expect(shouldForceManualReview("auto-approve", true)).toBe(true);
     expect(shouldForceManualReview("request-approval", true)).toBe(true);
+    expect(shouldForceManualReview(undefined, true)).toBe(true);
   });
 
   it("lets auto-approve-all skip impact confirmation", () => {

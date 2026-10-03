@@ -108,7 +108,10 @@ export default {
       "Ask for your approval before editing or writing the manuscript",
     approveAutomatically: "Approve automatically",
     automaticallyApproveEditsAndSaveThemToTheManuscript:
-      "Automatically approve edits and save them to the manuscript"
+      "Automatically approve edits and save them to the manuscript",
+    approveEverythingAutomatically: "Approve everything",
+    automaticallyApproveAllOperationsIncludingDeletionsWhichCannotBeUndone:
+      "Automatically approve all operations including irreversible deletions"
   },
   conversationTurnNavigator: {
     attachments: "Attachments: {attachmentNames}",

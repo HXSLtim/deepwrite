@@ -177,7 +177,11 @@ export function selectApprovalMode(
   ctx: RunSettingsContext,
   mode: AgentApprovalMode
 ): void {
-  if (mode === "request-approval" || mode === "auto-approve") {
+  if (
+    mode === "request-approval" ||
+    mode === "auto-approve" ||
+    mode === "auto-approve-all"
+  ) {
     ctx.approvalMode.value = mode;
   }
 }

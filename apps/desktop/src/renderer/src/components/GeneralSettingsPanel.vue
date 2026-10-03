@@ -84,6 +84,20 @@ const workspacePaneLayoutOptions = computed<
             @change="emit('updatePermissionMode', 'auto-approve')"
         /></span>
       </label>
+      <label class="settings-item">
+        <span class="settings-item-text"
+          ><strong>{{ t("fullAutoApproval") }}</strong
+          ><small>{{ t("fullAutoApprovalDescription") }}</small></span
+        >
+        <span class="settings-toggle"
+          ><input
+            type="radio"
+            name="general-permission-mode"
+            :checked="permissionMode === 'auto-approve-all'"
+            :aria-label="t('fullAutoApproval')"
+            @change="emit('updatePermissionMode', 'auto-approve-all')"
+        /></span>
+      </label>
     </div>
 
     <div class="settings-card">

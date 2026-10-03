@@ -6,6 +6,9 @@ export default {
   autoApproval: "替我审批",
   autoApprovalDescription:
     "智能体产生写入后立即自动批准，并在后台串行保存。自动审批可能会出错。",
+  fullAutoApproval: "全自动（含删除）",
+  fullAutoApprovalDescription:
+    "自动通过全部写入审批，包括删除章节、素材等不可恢复操作，直接落盘。",
   crossStageApproval: "跨阶段操作自动审批",
   crossStageApprovalDescription:
     "开启后，主智能体和子智能体的跨阶段操作将自动允许，不再逐笔询问；变更提案仍按上方审批方式处理。",

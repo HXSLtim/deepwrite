@@ -226,7 +226,11 @@ function editorReferenceTooltip(reference: EditorTextReference): string {
   });
 }
 function handleApprovalChange(value: string | number): void {
-  if (value === "request-approval" || value === "auto-approve")
+  if (
+    value === "request-approval" ||
+    value === "auto-approve" ||
+    value === "auto-approve-all"
+  )
     emit("selectApproval", value);
 }
 

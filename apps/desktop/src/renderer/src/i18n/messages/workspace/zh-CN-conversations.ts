@@ -101,7 +101,10 @@ export default {
     askForYourApprovalBeforeEditingOrWritingThe: "修改或写入正文前均需你的批准",
     approveAutomatically: "替我审批",
     automaticallyApproveEditsAndSaveThemToTheManuscript:
-      "自动批准修改并写入正文"
+      "自动批准修改并写入正文",
+    approveEverythingAutomatically: "全自动通过",
+    automaticallyApproveAllOperationsIncludingDeletionsWhichCannotBeUndone:
+      "自动通过全部操作（含删除，不可恢复）"
   },
   conversationTurnNavigator: {
     attachments: "附件：{attachmentNames}",

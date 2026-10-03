@@ -22,6 +22,7 @@ import type {
   AgentRunPreferencesByScope
 } from "../utils/agentRunPreferences";
 import { conversationHistoryPersistenceKey } from "../utils/conversationPersistence";
+import type { AgentApprovalMode } from "../types/conversation";
 
 function deferred<Value>() {
   let resolve!: (value: Value) => void;
@@ -50,9 +51,7 @@ function controllerFixture(name: string) {
   const selectedModelId = ref(`${name}-model`);
   const thinkingLevel = ref<ThinkingLevel>("low");
   const temperature = ref(0.7);
-  const approvalMode = ref<"request-approval" | "auto-approve">(
-    "request-approval"
-  );
+  const approvalMode = ref<AgentApprovalMode>("request-approval");
   const agentTeamMode = ref<"normal" | "team">("normal");
   const webSearchEnabled = ref(false);
   const applyRunSettings = vi.fn((settings: AgentRunSettings) => {
