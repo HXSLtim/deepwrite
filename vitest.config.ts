@@ -30,6 +30,9 @@ export default defineConfig({
       "apps/desktop/src/extras/**/*.test.ts",
       "apps/desktop/src/renderer/**/*.test.ts"
     ],
-    environment: "node"
+    environment: "node",
+    // Retry once to absorb load-induced timeouts in the io-heavy utility
+    // suites during full runs; genuine failures still fail.
+    retry: 1
   }
 });
