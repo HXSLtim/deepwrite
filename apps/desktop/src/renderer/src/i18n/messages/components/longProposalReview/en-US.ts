@@ -1,4 +1,6 @@
 export default {
+  acceptAllApprovals: "Accept all",
+  rejectAllApprovals: "Reject all",
   foreshadowingChanges: "Foreshadowing changes",
   worldbuildingReveals: "Worldbuilding reveals",
   currentCharacterState: "Current character state",

@@ -6,6 +6,8 @@ export default {
   truncated: "Truncated",
   generationStopped: "Generation stopped",
   approvalCardsForThisTurn: "Approval cards for this turn",
+  acceptAllApprovals: "Accept all",
+  rejectAllApprovals: "Reject all",
   editAndResend: "Edit and resend",
   copied: "Copied",
   copyReply: "Copy reply",

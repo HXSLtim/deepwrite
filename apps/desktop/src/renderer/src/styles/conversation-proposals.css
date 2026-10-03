@@ -12,6 +12,11 @@
   margin: 14px 0 20px;
 }
 
+.approval-stack-batch {
+  display: flex;
+  gap: 8px;
+}
+
 .processing-live-list > .approval-timeline-card {
   width: 100%;
   margin: 4px 0;

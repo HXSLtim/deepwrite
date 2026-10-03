@@ -11,6 +11,7 @@ import type {
 } from "../types/conversation";
 import { uiMessage } from "../ui-feedback";
 import {
+  actionableApprovalItems,
   approvalItemsForMessage,
   hasProcessing,
   visibleResponse
@@ -99,6 +100,40 @@ async function copyMessage(): Promise<void> {
 onBeforeUnmount(() => {
   if (copiedTimer !== undefined) globalThis.clearTimeout(copiedTimer);
 });
+
+function acceptAllApprovals(message: ChatMessage): void {
+  for (const approval of actionableApprovalItems(
+    message,
+    props.longProposalItems
+  )) {
+    if (approval.type === "edit-proposal") {
+      emit("reviewEdit", {
+        runId: approval.proposal.runId,
+        proposalId: approval.proposal.id,
+        decision: "accept"
+      });
+    } else {
+      emit("approveLongProposal", approval.item.event.id);
+    }
+  }
+}
+
+function rejectAllApprovals(message: ChatMessage): void {
+  for (const approval of actionableApprovalItems(
+    message,
+    props.longProposalItems
+  )) {
+    if (approval.type === "edit-proposal") {
+      emit("reviewEdit", {
+        runId: approval.proposal.runId,
+        proposalId: approval.proposal.id,
+        decision: "reject"
+      });
+    } else {
+      emit("rejectLongProposal", approval.item.event.id);
+    }
+  }
+}
 </script>
 
 <template>
@@ -195,6 +230,27 @@ onBeforeUnmount(() => {
           class="approval-card-stack"
           :aria-label="t('approvalCardsForThisTurn')"
         >
+          <div
+            v-if="
+              actionableApprovalItems(message, longProposalItems).length > 1
+            "
+            class="approval-stack-batch"
+          >
+            <button
+              type="button"
+              class="edit-review-button is-accept"
+              @click="acceptAllApprovals(message)"
+            >
+              {{ t("acceptAllApprovals") }}
+            </button>
+            <button
+              type="button"
+              class="edit-review-button is-reject"
+              @click="rejectAllApprovals(message)"
+            >
+              {{ t("rejectAllApprovals") }}
+            </button>
+          </div>
           <template
             v-for="approval in approvalItemsForMessage(
               message,

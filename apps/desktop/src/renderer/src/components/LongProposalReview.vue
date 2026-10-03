@@ -41,6 +41,21 @@ const pendingCount = computed(
 const completedCount = computed(
   () => props.items.filter(({ status }) => status === "accepted").length
 );
+const actionableItems = computed(() =>
+  props.items.filter(
+    (item) =>
+      item.status === "ready" &&
+      item.event.type !== "long.ledger_commit_proposal"
+  )
+);
+
+function acceptAll(): void {
+  for (const item of actionableItems.value) emit("approve", item.event.id);
+}
+
+function rejectAll(): void {
+  for (const item of actionableItems.value) emit("reject", item.event.id);
+}
 
 type LongContentFileChange = Extract<
   LongWorkspaceProposalItem["event"],
@@ -494,6 +509,25 @@ function diffLineMark(type: "context" | "addition" | "deletion"): string {
       </div>
       <small>{{ t("allChangesAreScopedToTheCurrentBook") }}</small>
     </header>
+    <div
+      v-if="!embedded && actionableItems.length > 1"
+      class="approval-stack-batch"
+    >
+      <button
+        type="button"
+        class="edit-review-button is-accept"
+        @click="acceptAll"
+      >
+        {{ t("acceptAllApprovals") }}
+      </button>
+      <button
+        type="button"
+        class="edit-review-button is-reject"
+        @click="rejectAll"
+      >
+        {{ t("rejectAllApprovals") }}
+      </button>
+    </div>
 
     <div class="long-proposal-list">
       <article

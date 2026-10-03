@@ -129,6 +129,17 @@ export function approvalItemsForMessage(
   return [...editItems, ...longItems].sort(compareApprovalCards);
 }
 
+export function actionableApprovalItems(
+  message: ChatMessage,
+  longProposalItems: readonly LongWorkspaceProposalItem[]
+): ApprovalCardItem[] {
+  return approvalItemsForMessage(message, longProposalItems).filter((item) =>
+    item.type === "edit-proposal"
+      ? item.proposal.status === "pending"
+      : item.item.status === "ready"
+  );
+}
+
 export function liveTimelineItems(
   message: ChatMessage,
   longProposalItems: readonly LongWorkspaceProposalItem[]
