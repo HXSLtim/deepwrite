@@ -50,6 +50,18 @@ function randomHex8() {
   return randomBytes(4).toString("hex");
 }
 
+/**
+ * Real DeepWrite userData on macOS. The app's productName is
+ * `@deepwrite/desktop`, so Electron places userData under
+ * `~/Library/Application Support/@deepwrite/desktop`.
+ */
+export function defaultUserDataPath(env = process.env, home = homedir()) {
+  if (env.DEEPWRITE_USER_DATA?.trim()) {
+    return resolve(env.DEEPWRITE_USER_DATA.trim());
+  }
+  return join(home, "Library", "Application Support", "@deepwrite/desktop");
+}
+
 /** Group profile: catalog skill kind and the default stage for its entries. */
 const GROUP_PROFILES = {
   style: {
@@ -454,9 +466,7 @@ async function main() {
   const userDataPath =
     userDataFlag >= 0 && args[userDataFlag + 1]
       ? resolve(args[userDataFlag + 1])
-      : process.env.DEEPWRITE_USER_DATA
-        ? resolve(process.env.DEEPWRITE_USER_DATA)
-        : join(homedir(), "Library", "Application Support", "DeepWrite");
+      : defaultUserDataPath();
 
   const result = await seedAll({ userDataPath, dryRun });
   console.log(`NovelOps seed target: ${userDataPath}`);

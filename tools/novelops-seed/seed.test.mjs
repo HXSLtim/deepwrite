@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { SkillLibraryProjectManifestSchema } from "../../packages/contracts/src/index.ts";
 import {
   assertRegistryShape,
+  defaultUserDataPath,
   buildSkillLibraryManifest,
   loadSeedManifest,
   mergeRegistryProjects,
@@ -273,6 +274,18 @@ describe("novelops skill seeding", () => {
     expect(result.team.reason).toBe("would create");
     expect(result.team.team.id).toBe(NOVELOPS_TEAM_ID);
     expect(await readFile(catalogPath, "utf8")).toBe(before);
+  });
+
+  it("defaults to the app's real user data directory", () => {
+    expect(defaultUserDataPath({}, "/Users/demo")).toBe(
+      "/Users/demo/Library/Application Support/@deepwrite/desktop"
+    );
+    expect(
+      defaultUserDataPath(
+        { DEEPWRITE_USER_DATA: "/tmp/alt-user-data" },
+        "/Users/demo"
+      )
+    ).toBe("/tmp/alt-user-data");
   });
 
   it("merges registry projects without duplicating known rows", () => {
