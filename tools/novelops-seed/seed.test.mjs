@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +12,8 @@ import {
   planSkillLibrary,
   seedAll
 } from "./seed.mjs";
+import { NOVELOPS_TEAM_ID } from "./team.mjs";
+import { AgentTeamProfileSchema } from "../../packages/contracts/src/index.ts";
 
 const SEED_ROOT = fileURLToPath(new URL(".", import.meta.url));
 const temporaryRoots = [];
@@ -43,7 +45,7 @@ const EMPTY_REGISTRY = {
   ]
 };
 
-async function fixtureUserData() {
+async function fixtureUserData({ withAgentTeams = false } = {}) {
   const root = await mkdtemp(join(tmpdir(), "novelops-seed-test-"));
   temporaryRoots.push(root);
   await writeFile(
@@ -51,6 +53,30 @@ async function fixtureUserData() {
     JSON.stringify(EMPTY_REGISTRY),
     "utf8"
   );
+  if (withAgentTeams) {
+    await mkdir(join(root, "config"), { recursive: true });
+    await writeFile(
+      join(root, "config", "agent-team-profiles.json"),
+      JSON.stringify({
+        version: 5,
+        enabledTeamIds: {},
+        builtinSubagents: {},
+        teams: [
+          {
+            id: "team_default_long",
+            name: "默认长篇团队",
+            workspaceType: "long",
+            settings: {
+              workspaceType: "long",
+              parallelSubagents: false,
+              teams: [{ parentAgentId: "long", subagents: [] }]
+            }
+          }
+        ]
+      }),
+      "utf8"
+    );
+  }
   return root;
 }
 
@@ -204,6 +230,49 @@ describe("novelops skill seeding", () => {
         "catalog-registry.json"
       )
     ).toThrow("malformed");
+  });
+
+  it("appends the preset team to an existing agent-team catalog", async () => {
+    const root = await fixtureUserData({ withAgentTeams: true });
+    const catalogPath = join(root, "config", "agent-team-profiles.json");
+    const result = await seedAll({ seedRoot: SEED_ROOT, userDataPath: root });
+
+    expect(result.team.seeded).toBe(true);
+    const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
+    expect(catalog.version).toBe(5);
+    expect(catalog.enabledTeamIds).toEqual({});
+    const seeded = catalog.teams.find((team) => team.id === NOVELOPS_TEAM_ID);
+    expect(() => AgentTeamProfileSchema.parse(seeded)).not.toThrow();
+    expect(catalog.teams.some((team) => team.id === "team_default_long")).toBe(
+      true
+    );
+    expect(seeded.settings.teams[0].subagents).toHaveLength(16);
+  });
+
+  it("seeds the team idempotently and leaves the catalog untouched on reruns", async () => {
+    const root = await fixtureUserData({ withAgentTeams: true });
+    const catalogPath = join(root, "config", "agent-team-profiles.json");
+    await seedAll({ seedRoot: SEED_ROOT, userDataPath: root });
+    const afterFirst = await readFile(catalogPath, "utf8");
+
+    const second = await seedAll({ seedRoot: SEED_ROOT, userDataPath: root });
+    expect(second.team.seeded).toBe(false);
+    expect(second.team.reason).toBe("already present");
+    expect(await readFile(catalogPath, "utf8")).toBe(afterFirst);
+  });
+
+  it("plans the team on dry-run without writing the catalog", async () => {
+    const root = await fixtureUserData({ withAgentTeams: true });
+    const catalogPath = join(root, "config", "agent-team-profiles.json");
+    const before = await readFile(catalogPath, "utf8");
+    const result = await seedAll({
+      seedRoot: SEED_ROOT,
+      userDataPath: root,
+      dryRun: true
+    });
+    expect(result.team.reason).toBe("would create");
+    expect(result.team.team.id).toBe(NOVELOPS_TEAM_ID);
+    expect(await readFile(catalogPath, "utf8")).toBe(before);
   });
 
   it("merges registry projects without duplicating known rows", () => {

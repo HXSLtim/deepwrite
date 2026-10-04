@@ -24,6 +24,7 @@
  */
 
 import { randomBytes } from "node:crypto";
+import { NOVELOPS_TEAM_ID, planAgentTeam } from "./team.mjs";
 import { existsSync } from "node:fs";
 import {
   readFile,
@@ -41,6 +42,8 @@ const SEED_ROOT = fileURLToPath(new URL(".", import.meta.url));
 const MANIFEST_FILE = "SEED_MANIFEST.json";
 const REGISTRY_FILE = "catalog-registry.json";
 const REGISTRY_BACKUP_FILE = "catalog-registry.json.bak";
+const AGENT_TEAM_FILE = "agent-team-profiles.json";
+const AGENT_TEAM_BACKUP_FILE = "agent-team-profiles.json.bak";
 const MAX_ENTRIES_PER_LIBRARY = 4096;
 
 function randomHex8() {
@@ -309,7 +312,19 @@ export async function seedAll({
   });
 
   if (dryRun) {
-    return { created: registrations, skipped, registryUpdated: false, plans };
+    const team = await seedAgentTeam({
+      userDataPath,
+      bodies,
+      timestamp,
+      dryRun
+    });
+    return {
+      created: registrations,
+      skipped,
+      registryUpdated: false,
+      plans,
+      team
+    };
   }
 
   for (const [index, plan] of pending.entries()) {
@@ -343,7 +358,6 @@ export async function seedAll({
   if (registrations.length > 0) {
     const merged = mergeRegistryProjects(registry, registrations);
     if (merged.added.length > 0) {
-      await mkdir(userDataPath, { recursive: true });
       await copyFile(registryPath, join(userDataPath, REGISTRY_BACKUP_FILE));
       const temporary = `${registryPath}.${randomHex8()}.tmp`;
       await writeFile(
@@ -355,7 +369,72 @@ export async function seedAll({
       registryUpdated = true;
     }
   }
-  return { created: registrations, skipped, registryUpdated, plans };
+
+  const team = await seedAgentTeam({ userDataPath, bodies, timestamp, dryRun });
+  return {
+    created: registrations,
+    skipped,
+    registryUpdated,
+    plans,
+    team
+  };
+}
+
+/**
+ * Appends the preset NovelOps team to the agent-team catalog. Idempotent by
+ * team id; leaves enabledTeamIds and every other team untouched.
+ */
+async function seedAgentTeam({ userDataPath, bodies, dryRun }) {
+  const teamCatalogPath = join(userDataPath, "config", AGENT_TEAM_FILE);
+  if (!existsSync(teamCatalogPath)) {
+    return { seeded: false, reason: "agent-team catalog not initialised yet" };
+  }
+  const catalog = JSON.parse(await readFile(teamCatalogPath, "utf8"));
+  assertAgentTeamCatalogShape(catalog, AGENT_TEAM_FILE);
+  const knownTeam = catalog.teams.some((team) => team.id === NOVELOPS_TEAM_ID);
+  if (knownTeam) {
+    return { seeded: false, reason: "already present" };
+  }
+  const team = planAgentTeam(bodies);
+  if (dryRun) {
+    return { seeded: false, reason: "would create", team };
+  }
+  await copyFile(
+    teamCatalogPath,
+    join(userDataPath, "config", AGENT_TEAM_BACKUP_FILE)
+  );
+  const temporary = `${teamCatalogPath}.${randomHex8()}.tmp`;
+  await writeFile(
+    temporary,
+    `${JSON.stringify({ ...catalog, teams: [...catalog.teams, team] }, null, 2)}\n`,
+    "utf8"
+  );
+  await rename(temporary, teamCatalogPath);
+  return { seeded: true, team };
+}
+
+function assertAgentTeamCatalogShape(catalog, source) {
+  if (!catalog || typeof catalog !== "object") {
+    throw new Error(`${source} is not a JSON object.`);
+  }
+  if (typeof catalog.version !== "number") {
+    throw new Error(`${source} has no catalog version; refusing to write.`);
+  }
+  if (!Array.isArray(catalog.teams) || catalog.teams.length === 0) {
+    throw new Error(`${source} has no teams array; refusing to write.`);
+  }
+  for (const [index, team] of catalog.teams.entries()) {
+    if (
+      !team ||
+      typeof team !== "object" ||
+      typeof team.id !== "string" ||
+      !team.id
+    ) {
+      throw new Error(
+        `${source} team ${index} is malformed; refusing to write.`
+      );
+    }
+  }
 }
 
 function sanitizePathSegment(value) {
@@ -400,6 +479,16 @@ async function main() {
   } else {
     console.log(
       `Created ${result.created.length}, skipped ${result.skipped.length}; registry ${result.registryUpdated ? "updated" : "unchanged"}.`
+    );
+  }
+  if (result.team) {
+    const label = result.team.seeded
+      ? "created"
+      : result.team.reason === "would create"
+        ? "would create"
+        : `skipped (${result.team.reason})`;
+    console.log(
+      `  Agent team ${NOVELOPS_TEAM_ID}: ${label}${result.team.team ? ` — ${result.team.team.settings.teams[0].subagents.length} members` : ""}`
     );
   }
 }
