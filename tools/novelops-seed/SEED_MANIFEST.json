@@ -1,0 +1,253 @@
+{
+  "groups": [
+    {
+      "id": "style",
+      "title": "文风与反AI模式",
+      "entries": [
+        {
+          "file": "style/文风六卡.md",
+          "title": "文风六卡（L3 常驻层 · 每句必过）",
+          "source": "novel-system/knowledge/文风六卡.md"
+        },
+        {
+          "file": "style/anti-ai-patterns.md",
+          "title": "反AI模式清单",
+          "source": "novel-system/knowledge/anti-ai-patterns.md"
+        }
+      ]
+    },
+    {
+      "id": "techniques",
+      "title": "技法卡库",
+      "entries": [
+        {
+          "file": "techniques/技法卡路由.md",
+          "title": "技法卡路由（L2 弹药路由 · 半自动凭证制）",
+          "source": "novel-system/knowledge/技法卡路由.md"
+        },
+        {
+          "file": "techniques/技法卡大全_01_叙事·镜头·文笔.md",
+          "title": "技法卡大全 · D01 叙事·镜头·文笔（52 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_01_叙事·镜头·文笔.md"
+        },
+        {
+          "file": "techniques/技法卡大全_02_感官·环境·世界质感.md",
+          "title": "技法卡大全 · D02 感官·环境·世界质感（14 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_02_感官·环境·世界质感.md"
+        },
+        {
+          "file": "techniques/技法卡大全_03_结构·节奏·章纲.md",
+          "title": "技法卡大全 · D03 结构·节奏·章纲（32 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_03_结构·节奏·章纲.md"
+        },
+        {
+          "file": "techniques/技法卡大全_04_钩子·悬念·信息控制.md",
+          "title": "技法卡大全 · D04 钩子·悬念·信息控制（16 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_04_钩子·悬念·信息控制.md"
+        },
+        {
+          "file": "techniques/技法卡大全_05_对话·潜台词·关系张力.md",
+          "title": "技法卡大全 · D05 对话·潜台词·关系张力（14 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_05_对话·潜台词·关系张力.md"
+        },
+        {
+          "file": "techniques/技法卡大全_06_战斗·动作·战术.md",
+          "title": "技法卡大全 · D06 战斗·动作·战术（32 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_06_战斗·动作·战术.md"
+        },
+        {
+          "file": "techniques/技法卡大全_07_人物·人设·关系网.md",
+          "title": "技法卡大全 · D07 人物·人设·关系网（47 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_07_人物·人设·关系网.md"
+        },
+        {
+          "file": "techniques/技法卡大全_08_情感·情绪渲染.md",
+          "title": "技法卡大全 · D08 情感·情绪渲染（35 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_08_情感·情绪渲染.md"
+        },
+        {
+          "file": "techniques/技法卡大全_09_反派·冲突·智斗.md",
+          "title": "技法卡大全 · D09 反派·冲突·智斗（4 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_09_反派·冲突·智斗.md"
+        },
+        {
+          "file": "techniques/技法卡大全_10_开篇·书名·简介包装.md",
+          "title": "技法卡大全 · D10 开篇·书名·简介包装（17 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_10_开篇·书名·简介包装.md"
+        },
+        {
+          "file": "techniques/技法卡大全_11_类型·世界观·题材.md",
+          "title": "技法卡大全 · D11 类型·世界观·题材（82 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_11_类型·世界观·题材.md"
+        },
+        {
+          "file": "techniques/技法卡大全_12_爽点·爆款·传播技巧.md",
+          "title": "技法卡大全 · D12 爽点·爆款·传播技巧（62 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_12_爽点·爆款·传播技巧.md"
+        },
+        {
+          "file": "techniques/技法卡大全_13_场景·物件·生活质感.md",
+          "title": "技法卡大全 · D13 场景·物件·生活质感（19 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_13_场景·物件·生活质感.md"
+        },
+        {
+          "file": "techniques/技法卡大全_14_心理·执念·认知.md",
+          "title": "技法卡大全 · D14 心理·执念·认知（10 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_14_心理·执念·认知.md"
+        },
+        {
+          "file": "techniques/技法卡大全_15_结局·收束·BE美学.md",
+          "title": "技法卡大全 · D15 结局·收束·BE美学（2 张）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_15_结局·收束·BE美学.md"
+        },
+        {
+          "file": "techniques/技法卡大全_索引.md",
+          "title": "技法卡大全 · 总索引（438 张 novel-how-* 技法卡）",
+          "source": "novel-system/knowledge/技法卡/技法卡大全_索引.md"
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "title": "写作流程（ORCHESTRATOR 与角色提示词）",
+      "entries": [
+        {
+          "file": "workflow/ORCHESTRATOR.md",
+          "title": "ORCHESTRATOR.md — 小说写作系统主编调度指令",
+          "source": "novel-system/ORCHESTRATOR.md"
+        },
+        {
+          "file": "workflow/ORCHESTRATOR-newbook.md",
+          "title": "ORCHESTRATOR-newbook.md — 新书模式执行协议（阶段0：全局规划）",
+          "source": "novel-system/ORCHESTRATOR-newbook.md"
+        },
+        {
+          "file": "workflow/ORCHESTRATOR-modes.md",
+          "title": "ORCHESTRATOR-modes.md — 独立流程与特殊模式",
+          "source": "novel-system/ORCHESTRATOR-modes.md"
+        },
+        {
+          "file": "workflow/ORCHESTRATOR-reference.md",
+          "title": "ORCHESTRATOR-reference.md — 参考文档与附录",
+          "source": "novel-system/ORCHESTRATOR-reference.md"
+        },
+        {
+          "file": "workflow/continue-prompt.md",
+          "title": "续写流程指令",
+          "source": "novel-system/prompts/continue-prompt.md"
+        },
+        {
+          "file": "workflow/editor-prompt.md",
+          "title": "编辑Agent Prompt",
+          "source": "novel-system/prompts/editor-prompt.md"
+        },
+        {
+          "file": "workflow/humanizer-prompt.md",
+          "title": "Humanizer 去AI化Prompt",
+          "source": "novel-system/prompts/humanizer-prompt.md"
+        },
+        {
+          "file": "workflow/imitate-prompt.md",
+          "title": "仿写流程指令",
+          "source": "novel-system/prompts/imitate-prompt.md"
+        },
+        {
+          "file": "workflow/writer-prompt.md",
+          "title": "写作Agent Prompt",
+          "source": "novel-system/prompts/writer-prompt.md"
+        },
+        {
+          "file": "workflow/characters.md",
+          "title": "人物档案",
+          "source": "novel-system/static/prompts/characters.md"
+        },
+        {
+          "file": "workflow/creative-disruption.md",
+          "title": "创意扰动提案",
+          "source": "novel-system/static/prompts/creative-disruption.md"
+        },
+        {
+          "file": "workflow/material-prep.md",
+          "title": "素材报告",
+          "source": "novel-system/static/prompts/material-prep.md"
+        },
+        {
+          "file": "workflow/operations.md",
+          "title": "运营包装方案",
+          "source": "novel-system/static/prompts/operations.md"
+        },
+        {
+          "file": "workflow/outline.md",
+          "title": "三幕结构大纲",
+          "source": "novel-system/static/prompts/outline.md"
+        },
+        {
+          "file": "workflow/pacing.md",
+          "title": "节奏规划卡",
+          "source": "novel-system/static/prompts/pacing.md"
+        },
+        {
+          "file": "workflow/qc.md",
+          "title": "QA报告 · 第N章",
+          "source": "novel-system/static/prompts/qc.md"
+        },
+        {
+          "file": "workflow/topic-market.md",
+          "title": "市场调研报告",
+          "source": "novel-system/static/prompts/topic-market.md"
+        },
+        {
+          "file": "workflow/topic.md",
+          "title": "选题卡",
+          "source": "novel-system/static/prompts/topic.md"
+        },
+        {
+          "file": "workflow/writer.md",
+          "title": "第N章：[章节标题]",
+          "source": "novel-system/static/prompts/writer.md"
+        }
+      ]
+    },
+    {
+      "id": "genres",
+      "title": "题材与包装库",
+      "entries": [
+        {
+          "file": "genres/genre-guides.md",
+          "title": "题材指南",
+          "source": "novel-system/knowledge/genre-guides.md"
+        },
+        {
+          "file": "genres/platform-patterns.md",
+          "title": "平台模式知识库",
+          "source": "novel-system/knowledge/platform-patterns.md"
+        },
+        {
+          "file": "genres/suspense-hooks.md",
+          "title": "悬念钩子系统",
+          "source": "novel-system/knowledge/suspense-hooks.md"
+        },
+        {
+          "file": "genres/character-templates.md",
+          "title": "角色模板",
+          "source": "novel-system/knowledge/character-templates.md"
+        },
+        {
+          "file": "genres/power-system-templates.md",
+          "title": "力量体系模板",
+          "source": "novel-system/knowledge/power-system-templates.md"
+        },
+        {
+          "file": "genres/title-patterns.md",
+          "title": "标题公式",
+          "source": "novel-system/knowledge/title-patterns.md"
+        },
+        {
+          "file": "genres/USAGE.md",
+          "title": "语料库与Prompt使用文档",
+          "source": "novel-system/knowledge/USAGE.md"
+        }
+      ]
+    }
+  ]
+}
