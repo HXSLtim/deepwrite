@@ -10,14 +10,20 @@ import {
   type ConversationTimelineBlock
 } from "./conversationTimelineBlocks";
 import {
-  splitLiveCollapsedItems,
-  type LiveCollapsedSplit
+  splitLiveAttentionItems,
+  splitLiveCollapsedItems
 } from "./conversationToolPresentation";
 
 type ProcessingBlockItem = Extract<
   ConversationTimelineBlock,
   { kind: "processing" }
 >["items"][number];
+
+interface LiveBlockSplit {
+  attention: ProcessingBlockItem[];
+  collapsed: ProcessingBlockItem[];
+  active: ProcessingBlockItem[];
+}
 import AppIcon from "./AppIcon.vue";
 import ConversationContextCompactionNotice from "./ConversationContextCompactionNotice.vue";
 import ConversationDetails from "./ConversationDetails.vue";
@@ -46,10 +52,12 @@ const blocks = computed(() =>
 );
 
 const liveSplits = computed(() => {
-  const splits = new Map<string, LiveCollapsedSplit<ProcessingBlockItem>>();
+  const splits = new Map<string, LiveBlockSplit>();
   for (const block of blocks.value) {
     if (block.kind === "processing" && block.live && block.items.length) {
-      splits.set(block.id, splitLiveCollapsedItems(block.items));
+      const { attention, foldable } = splitLiveAttentionItems(block.items);
+      const { collapsed, active } = splitLiveCollapsedItems(foldable);
+      splits.set(block.id, { attention, collapsed, active });
     }
   }
   return splits;
@@ -79,30 +87,75 @@ const emit = defineEmits<{
       class="processing-live-list"
       :aria-label="t('components.conversationProcessingTimeline.execution')"
     >
-      <div class="processing-live-status" aria-live="off">
-        <ConversationRunClock
-          v-slot="{ now }"
-          :active="message.status === 'streaming' || Boolean(message.retry)"
-        >
-          {{ timelineProcessingLabel(message, block, now) }}
-        </ConversationRunClock>
-      </div>
       <ConversationDetails
-        v-if="liveSplits.get(block.id)?.collapsed.length"
-        :detail-id="`${message.id}:${block.id}:live-collapsed`"
+        :detail-id="`${message.id}:${block.id}:live`"
         class="processing-block"
       >
         <template #summary>
-          <span>{{
-            t("components.conversationToolPresentation.completedToolsValue", {
-              arg0: liveSplits.get(block.id)!.collapsed.length
-            })
-          }}</span>
+          <span class="processing-live-status" aria-live="off">
+            <ConversationRunClock
+              v-slot="{ now }"
+              :active="message.status === 'streaming' || Boolean(message.retry)"
+            >
+              {{ timelineProcessingLabel(message, block, now) }}
+            </ConversationRunClock>
+          </span>
           <AppIcon name="chevron" :size="13" />
         </template>
         <div class="processing-content">
+          <ConversationDetails
+            v-if="liveSplits.get(block.id)?.collapsed.length"
+            :detail-id="`${message.id}:${block.id}:live-collapsed`"
+            class="processing-block"
+          >
+            <template #summary>
+              <span>{{
+                t(
+                  "components.conversationToolPresentation.completedToolsValue",
+                  {
+                    arg0: liveSplits.get(block.id)!.collapsed.length
+                  }
+                )
+              }}</span>
+              <AppIcon name="chevron" :size="13" />
+            </template>
+            <div class="processing-content">
+              <template
+                v-for="item in liveSplits.get(block.id)!.collapsed"
+                :key="item.id"
+              >
+                <ConversationWorkGroup
+                  v-if="item.type === 'work-group'"
+                  :item="item"
+                  streaming
+                />
+                <SubagentRunList
+                  v-else-if="item.type === 'subagent'"
+                  :message="message"
+                  :runs="item.runs"
+                />
+                <ConversationProcessingItem
+                  v-else
+                  :item="item"
+                  streaming
+                  :message-status="message.status"
+                  :allow-live-edit-review="allowLiveEditReview"
+                  :long-workspace-index="longWorkspaceIndex"
+                  @review-edit="emit('reviewEdit', $event)"
+                  @locate-edit-proposal="emit('locateEditProposal', $event)"
+                  @discard-edit-proposal="emit('discardEditProposal', $event)"
+                  @approve-long-proposal="emit('approveLongProposal', $event)"
+                  @reject-long-proposal="emit('rejectLongProposal', $event)"
+                  @retry-long-proposal-preview="
+                    emit('retryLongProposalPreview', $event)
+                  "
+                  @locate-long-proposal="emit('locateLongProposal', $event)"
+                />
+              </template>
+            </div>
+          </ConversationDetails>
           <template
-            v-for="item in liveSplits.get(block.id)!.collapsed"
+            v-for="item in liveSplits.get(block.id)?.active ?? []"
             :key="item.id"
           >
             <ConversationWorkGroup
@@ -136,7 +189,7 @@ const emit = defineEmits<{
         </div>
       </ConversationDetails>
       <template
-        v-for="item in liveSplits.get(block.id)?.active ?? block.items"
+        v-for="item in liveSplits.get(block.id)?.attention ?? []"
         :key="item.id"
       >
         <ConversationWorkGroup

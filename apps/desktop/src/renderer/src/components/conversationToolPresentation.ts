@@ -163,6 +163,46 @@ export interface LiveCollapsedSplit<
  * 由渲染层收成"已完成 N 项"一行；运行中、失败、子代理、
  * 审批卡一律保持 active 平铺。
  */
+function isLiveAttentionItem(item: ProcessingDisplayItem): boolean {
+  if (item.type === "edit-proposal" || item.type === "long-proposal") {
+    return true;
+  }
+  if (item.type === "tool") return item.tool.status === "error";
+  if (item.type === "tool-group") {
+    return item.tools.some((tool) => tool.status === "error");
+  }
+  if (item.type === "work-group") {
+    return workGroupTools(item).some((tool) => tool.status === "error");
+  }
+  return false;
+}
+
+export interface LiveAttentionSplit<
+  Item extends ProcessingDisplayItem = ProcessingDisplayItem
+> {
+  attention: Item[];
+  foldable: Item[];
+}
+
+/**
+ * streaming（live）块整体收起：审批待决卡与失败项需要用户注意力，
+ * 留在收起容器之外保持可见；其余条目全部进入可收起的折叠视图。
+ */
+export function splitLiveAttentionItems<
+  Item extends ProcessingDisplayItem
+>(items: Item[]): LiveAttentionSplit<Item> {
+  const attention: Item[] = [];
+  const foldable: Item[] = [];
+  for (const item of items) {
+    if (isLiveAttentionItem(item)) {
+      attention.push(item);
+    } else {
+      foldable.push(item);
+    }
+  }
+  return { attention, foldable };
+}
+
 export function splitLiveCollapsedItems<Item extends ProcessingDisplayItem>(
   items: Item[]
 ): LiveCollapsedSplit<Item> {

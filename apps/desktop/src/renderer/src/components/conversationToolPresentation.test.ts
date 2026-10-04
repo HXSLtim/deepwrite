@@ -10,6 +10,7 @@ import {
   processingDisplayItems,
   processingItems,
   processingLabel,
+  splitLiveAttentionItems,
   splitLiveCollapsedItems,
   visibleResponse,
   workspaceToolLabel,
@@ -326,39 +327,39 @@ describe("actionableApprovalItems", () => {
   });
 });
 
+function pendingEditCard(): ProcessingDisplayItem {
+  return {
+    id: "edit:pending-edit",
+    type: "edit-proposal",
+    createdAt: startedAt,
+    toolCallIds: ["edit-tool-1"],
+    canDiscard: true,
+    proposal: {
+      id: "pending-edit",
+      runId: "run-approve",
+      workspaceId: "short-book-1",
+      stageId: "plot_design",
+      documentId: "plot_design",
+      title: "剧情设计",
+      summary: "调整剧情设计",
+      status: "pending",
+      baseRevision: "before",
+      proposedRevision: "after",
+      toolCallIds: ["edit-tool-1"],
+      additions: 2,
+      deletions: 1,
+      hunks: [],
+      createdAt: startedAt,
+      updatedAt: startedAt,
+      discardSnapshot: { beforeText: "修改前", beforeTitle: "剧情设计" }
+    }
+  };
+}
+
 describe("splitLiveCollapsedItems", () => {
   const completedTool = tool("done-1", "completed");
   const runningWriteTool = tool("write-running", "running");
   const errorTool = tool("failed-1", "error");
-
-  function pendingEditCard(): ProcessingDisplayItem {
-    return {
-      id: "edit:pending-edit",
-      type: "edit-proposal",
-      createdAt: startedAt,
-      toolCallIds: ["edit-tool-1"],
-      canDiscard: true,
-      proposal: {
-        id: "pending-edit",
-        runId: "run-approve",
-        workspaceId: "short-book-1",
-        stageId: "plot_design",
-        documentId: "plot_design",
-        title: "剧情设计",
-        summary: "调整剧情设计",
-        status: "pending",
-        baseRevision: "before",
-        proposedRevision: "after",
-        toolCallIds: ["edit-tool-1"],
-        additions: 2,
-        deletions: 1,
-        hunks: [],
-        createdAt: startedAt,
-        updatedAt: startedAt,
-        discardSnapshot: { beforeText: "修改前", beforeTitle: "剧情设计" }
-      }
-    };
-  }
 
   it("folds completed tool groups and keeps running or failed items active", () => {
     const items: ProcessingDisplayItem[] = [
@@ -428,5 +429,70 @@ describe("splitLiveCollapsedItems", () => {
     expect(split.active.some((item) => item.type === "edit-proposal")).toBe(
       true
     );
+  });
+});
+
+describe("splitLiveAttentionItems", () => {
+  it("keeps approval cards and failed items outside the foldable view", () => {
+    const items: ProcessingDisplayItem[] = [
+      {
+        id: "g1",
+        type: "tool-group",
+        tools: [tool("done-1", "completed"), tool("run-1", "running")]
+      },
+      pendingEditCard(),
+      { id: "t1", type: "tool", tool: tool("failed-1", "error") },
+      {
+        id: "g2",
+        type: "tool-group",
+        tools: [tool("done-2", "completed"), tool("failed-2", "error")]
+      },
+      {
+        id: "w1",
+        type: "work-group",
+        running: true,
+        items: [
+          {
+            id: "tools-w1",
+            type: "tool-group",
+            tools: [tool("run-2", "running")]
+          }
+        ]
+      },
+      {
+        id: "w2",
+        type: "work-group",
+        running: false,
+        items: [
+          {
+            id: "tools-w2",
+            type: "tool-group",
+            tools: [tool("failed-3", "error")]
+          }
+        ]
+      },
+      {
+        id: "s1",
+        type: "subagent",
+        toolCallId: "spawn-1",
+        runs: [],
+        createdAt: startedAt
+      }
+    ];
+    const split = splitLiveAttentionItems(items);
+    expect(split.attention.map((item) => item.id)).toEqual([
+      "edit:pending-edit",
+      "t1",
+      "g2",
+      "w2"
+    ]);
+    expect(split.foldable.map((item) => item.id)).toEqual(["g1", "w1", "s1"]);
+  });
+
+  it("returns both sides empty for an empty live block", () => {
+    expect(splitLiveAttentionItems([])).toEqual({
+      attention: [],
+      foldable: []
+    });
   });
 });

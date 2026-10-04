@@ -476,10 +476,7 @@ describe("AgentConversation edit proposal placement", () => {
       disclosureEnd
     );
     const timelineLoops: readonly [string, string][] = [
-      [
-        liveTimeline,
-        'v-for="item in liveSplits.get(block.id)?.active ?? block.items"'
-      ],
+      [liveTimeline, 'v-for="item in liveSplits.get(block.id)?.active ?? []"'],
       [historyTimeline, 'v-for="item in block.items"']
     ];
     for (const [timeline, loopSource] of timelineLoops) {
@@ -499,6 +496,12 @@ describe("AgentConversation edit proposal placement", () => {
       expect(timeline).toContain(':runs="item.runs"');
     }
     expect(processingTimelineSource).toContain("live-collapsed");
+    expect(processingTimelineSource).toContain(
+      "${message.id}:${block.id}:live`"
+    );
+    expect(processingTimelineSource).toContain(
+      'v-for="item in liveSplits.get(block.id)?.attention ?? []"'
+    );
     expect(processingTimelineSource.slice(disclosureEnd)).not.toContain(
       "<SubagentRunList"
     );
