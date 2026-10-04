@@ -188,9 +188,9 @@ export interface LiveAttentionSplit<
  * streaming（live）块整体收起：审批待决卡与失败项需要用户注意力，
  * 留在收起容器之外保持可见；其余条目全部进入可收起的折叠视图。
  */
-export function splitLiveAttentionItems<
-  Item extends ProcessingDisplayItem
->(items: Item[]): LiveAttentionSplit<Item> {
+export function splitLiveAttentionItems<Item extends ProcessingDisplayItem>(
+  items: Item[]
+): LiveAttentionSplit<Item> {
   const attention: Item[] = [];
   const foldable: Item[] = [];
   for (const item of items) {
