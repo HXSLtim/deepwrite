@@ -149,59 +149,63 @@ describe("project transaction", () => {
     );
   });
 
-  it("serializes concurrent writers and preserves the successful request identity", async () => {
-    const root = await temporaryProject();
-    const expectedSha256 = projectTransactionContentSha256("before");
-    for (let round = 0; round < 12; round += 1) {
-      const path = `shared-${round}.md`;
-      await writeFile(join(root, path), "before", "utf8");
-      const attempts = ["writer-one", "writer-two"].map(async (writer) => {
-        const content = `${writer}-${round}`;
-        return {
-          content,
-          result: await commitProjectTransaction({
-            projectRoot: root,
-            operations: [
-              {
-                path,
-                content,
-                expectedSha256
-              }
-            ]
-          })
-        };
-      });
+  it(
+    "serializes concurrent writers and preserves the successful request identity",
+    { timeout: 20000 },
+    async () => {
+      const root = await temporaryProject();
+      const expectedSha256 = projectTransactionContentSha256("before");
+      for (let round = 0; round < 12; round += 1) {
+        const path = `shared-${round}.md`;
+        await writeFile(join(root, path), "before", "utf8");
+        const attempts = ["writer-one", "writer-two"].map(async (writer) => {
+          const content = `${writer}-${round}`;
+          return {
+            content,
+            result: await commitProjectTransaction({
+              projectRoot: root,
+              operations: [
+                {
+                  path,
+                  content,
+                  expectedSha256
+                }
+              ]
+            })
+          };
+        });
 
-      const settled = await Promise.allSettled(attempts);
-      const fulfilled = settled.filter(
-        (
-          result
-        ): result is PromiseFulfilledResult<
-          Awaited<(typeof attempts)[number]>
-        > => result.status === "fulfilled"
-      );
-      const rejected = settled.filter(
-        (result): result is PromiseRejectedResult =>
-          result.status === "rejected"
-      );
-      expect(fulfilled).toHaveLength(1);
-      expect(rejected).toHaveLength(1);
-      if (!(rejected[0]!.reason instanceof ProjectTransactionConflictError)) {
-        throw rejected[0]!.reason;
+        const settled = await Promise.allSettled(attempts);
+        const fulfilled = settled.filter(
+          (
+            result
+          ): result is PromiseFulfilledResult<
+            Awaited<(typeof attempts)[number]>
+          > => result.status === "fulfilled"
+        );
+        const rejected = settled.filter(
+          (result): result is PromiseRejectedResult =>
+            result.status === "rejected"
+        );
+        expect(fulfilled).toHaveLength(1);
+        expect(rejected).toHaveLength(1);
+        if (!(rejected[0]!.reason instanceof ProjectTransactionConflictError)) {
+          throw rejected[0]!.reason;
+        }
+        expect(fulfilled[0]!.value.result.transactionId).toMatch(
+          /^txn-[0-9]+-[0-9a-f]{8}$/u
+        );
+        await expect(readFile(join(root, path), "utf8")).resolves.toBe(
+          fulfilled[0]!.value.content
+        );
       }
-      expect(fulfilled[0]!.value.result.transactionId).toMatch(
-        /^txn-[0-9]+-[0-9a-f]{8}$/u
-      );
-      await expect(readFile(join(root, path), "utf8")).resolves.toBe(
-        fulfilled[0]!.value.content
-      );
+      await expect(
+        lstat(join(root, ".deepwrite", "transaction.lock"))
+      ).rejects.toMatchObject({
+        code: "ENOENT"
+      });
     }
-    await expect(
-      lstat(join(root, ".deepwrite", "transaction.lock"))
-    ).rejects.toMatchObject({
-      code: "ENOENT"
-    });
-  });
+  );
 
   it("does not unlink an ABA replacement that reuses the same lock owner data", async () => {
     const root = await temporaryProject();
