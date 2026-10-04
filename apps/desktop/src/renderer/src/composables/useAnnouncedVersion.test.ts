@@ -22,13 +22,16 @@ describe("announcement version reminders", () => {
     ).toBe(false);
   });
 
-  it("clears the reminder only when versions match or the announcement is removed", () => {
+  it("clears the reminder when the announcement matches or is not newer", () => {
     expect(
       announcedVersionStatus("1.5.3", "1.5.3", "1.5.0").hasVersionNotice
     ).toBe(false);
     expect(
       announcedVersionStatus("1.5.3", "1.5.4", "1.5.3").hasVersionNotice
-    ).toBe(true);
+    ).toBe(false);
+    expect(
+      announcedVersionStatus("1.4.0", "1.5.4", "1.5.3").hasVersionNotice
+    ).toBe(false);
     expect(announcedVersionStatus(undefined, "1.5.2", "1.5.0")).toEqual({
       hasVersionNotice: false,
       manualUpdateRequired: false

@@ -12,7 +12,7 @@ export function announcedVersionStatus(
   }
   try {
     return {
-      hasVersionNotice: compareVersions(announcedVersion, currentVersion) !== 0,
+      hasVersionNotice: compareVersions(announcedVersion, currentVersion) > 0,
       manualUpdateRequired: Boolean(
         remoteVersion && compareVersions(remoteVersion, announcedVersion) < 0
       )
