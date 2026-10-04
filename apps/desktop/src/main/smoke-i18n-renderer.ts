@@ -198,7 +198,9 @@ export async function i18nSmokeInRenderer(
   const settings = [...document.querySelectorAll(".settings-category")].map(
     (node) => node.textContent!.trim()
   );
-  ensure(settings.length >= 14, "settings categories missing");
+  // Current SettingsPage renders 12 categories; the marketing model panels
+  // (free/official/site-official) were removed, lowering the earlier count.
+  ensure(settings.length >= 12, "settings categories missing");
   ensure(
     settings.every((text) => !/\p{Script=Han}/u.test(text)),
     "Chinese settings category in English mode"
