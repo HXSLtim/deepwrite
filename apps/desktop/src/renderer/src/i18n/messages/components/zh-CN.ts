@@ -70,7 +70,6 @@ import exportShortManuscriptDialog from "./exportShortManuscriptDialog/zh-CN";
 import externalSkillImportDialog from "./externalSkillImportDialog/zh-CN";
 import foreshadowingFilterBar from "./foreshadowingFilterBar/zh-CN";
 import freeModelPresentation from "./freeModelPresentation/zh-CN";
-import freeModelsPanel from "./freeModelsPanel/zh-CN";
 import leftSidebar from "./leftSidebar/zh-CN";
 import libraryAgentSettingsPanel from "./libraryAgentSettingsPanel/zh-CN";
 import libraryEntryMoveDialog from "./libraryEntryMoveDialog/zh-CN";
@@ -125,7 +124,6 @@ import modelSettingsDraft from "./modelSettingsDraft/zh-CN";
 import modelSettingsFeature from "./modelSettingsFeature/zh-CN";
 import modelUsageModuleMeta from "./modelUsageModuleMeta/zh-CN";
 import modelUsagePanel from "./modelUsagePanel/zh-CN";
-import officialModelsPanel from "./officialModelsPanel/zh-CN";
 import plotStructureDialog from "./plotStructureDialog/zh-CN";
 import popupSelect from "./popupSelect/zh-CN";
 import previewOutlinePopover from "./previewOutlinePopover/zh-CN";
@@ -137,7 +135,6 @@ import shortAgentSettingsPanel from "./shortAgentSettingsPanel/zh-CN";
 import sidebarMoreFeatures from "./sidebarMoreFeatures/zh-CN";
 import sidebarProfileMenu from "./sidebarProfileMenu/zh-CN";
 import sidebarResourceList from "./sidebarResourceList/zh-CN";
-import siteOfficialModelsPanel from "./siteOfficialModelsPanel/zh-CN";
 import siteOfficialQuotaMergeDialog from "./siteOfficialQuotaMergeDialog/zh-CN";
 import skillMarketplacePage from "./skillMarketplacePage/zh-CN";
 import skillMetadataEditor from "./skillMetadataEditor/zh-CN";
@@ -240,7 +237,6 @@ export default {
   externalSkillImportDialog,
   foreshadowingFilterBar,
   freeModelPresentation,
-  freeModelsPanel,
   leftSidebar,
   libraryAgentSettingsPanel,
   libraryEntryMoveDialog,
@@ -295,7 +291,6 @@ export default {
   modelSettingsFeature,
   modelUsageModuleMeta,
   modelUsagePanel,
-  officialModelsPanel,
   plotStructureDialog,
   popupSelect,
   previewOutlinePopover,
@@ -307,7 +302,6 @@ export default {
   sidebarMoreFeatures,
   sidebarProfileMenu,
   sidebarResourceList,
-  siteOfficialModelsPanel,
   siteOfficialQuotaMergeDialog,
   skillMarketplacePage,
   skillMetadataEditor,

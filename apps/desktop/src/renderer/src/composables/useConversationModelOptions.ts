@@ -2,7 +2,6 @@ import { createScopedTranslator } from "../i18n";
 import { computed } from "vue";
 import {
   BUILT_IN_REASONING_LEVELS,
-  isDeepWriteSiteOfficialModel,
   type BuiltInReasoningLevel,
   type ModelConfig,
   type ThinkingLevel
@@ -13,37 +12,6 @@ import type { IconName } from "../types/workspace";
 import { isWorkspaceWebSearchAvailable } from "./agent-conversation/web-search";
 
 const t = createScopedTranslator("workspace.conversationModelOptions");
-
-const MODEL_GROUPS = [
-  {
-    provider: "official",
-    get providerLabel() {
-      return t("officialSite");
-    }
-  },
-  {
-    provider: "custom",
-    get providerLabel() {
-      return t("customModels");
-    }
-  },
-  {
-    provider: "free",
-    get providerLabel() {
-      return t("freeModels");
-    }
-  }
-] as const;
-
-function modelGroup(model: ModelConfig): string {
-  if (
-    isDeepWriteSiteOfficialModel(model) ||
-    model.managedBy === "deepwrite-official"
-  ) {
-    return "official";
-  }
-  return model.managedBy === "deepwrite-free" ? "free" : "custom";
-}
 
 export function useConversationModelOptions(options: {
   models: ModelConfig[];
@@ -116,23 +84,14 @@ export function useConversationModelOptions(options: {
       : fallbackThinkingOptions
   );
   const modelOptions = computed(() =>
-    MODEL_GROUPS.flatMap((group) =>
-      options.models
-        .filter((model) => modelGroup(model) === group.provider)
-        .map((model) => ({
-          value: model.id,
-          label: model.label,
-          ...(group.provider === "custom"
-            ? {
-                provider: `custom:${model.provider}`,
-                providerLabel:
-                  MODEL_PROVIDER_OPTIONS.find(
-                    (option) => option.value === model.provider
-                  )?.label ?? model.provider
-              }
-            : group)
-        }))
-    )
+    options.models.map((model) => ({
+      value: model.id,
+      label: model.label,
+      provider: `custom:${model.provider}`,
+      providerLabel:
+        MODEL_PROVIDER_OPTIONS.find((option) => option.value === model.provider)
+          ?.label ?? model.provider
+    }))
   );
   const showsTemperature = computed(
     () => Boolean(selectedModel.value) && options.thinkingLevel === "off"

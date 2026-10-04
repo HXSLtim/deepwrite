@@ -111,11 +111,11 @@ describe("conversation view behavior", () => {
         providerLabel
       ])
     ).toEqual([
-      ["deepwrite-site-official-example", "官方小站"],
-      ["legacy-official", "官方小站"],
+      ["free", "example"],
       ["custom-first", "OpenAI"],
+      ["deepwrite-site-official-example", "deepwrite-site"],
       ["custom-second", "provider-b"],
-      ["free", "免费模型"]
+      ["legacy-official", "example"]
     ]);
     expect(composerSource).toContain(':model-options="modelOptions"');
     expect(modelConfigSource).toContain("selectModel");

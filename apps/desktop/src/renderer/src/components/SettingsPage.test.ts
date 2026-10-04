@@ -223,42 +223,16 @@ describe("SettingsPage", () => {
     expect(source).toContain("emit('resetLibraryAgent', $event)");
   });
 
-  it("orders usage, free, custom, old-site, and new-site model settings", () => {
+  it("orders usage and custom model settings", () => {
     const usageIndex = source.indexOf('id: "usage"');
-    const freeModelsIndex = source.indexOf('id: "free-models"');
     const customModelsIndex = source.indexOf('id: "custom-models"');
-    const officialModelsIndex = source.indexOf('id: "official-models"');
-    const siteOfficialModelsIndex = source.indexOf(
-      'id: "site-official-models"'
-    );
 
     expect(usageIndex).toBeGreaterThan(-1);
-    expect(freeModelsIndex).toBeGreaterThan(usageIndex);
-    expect(customModelsIndex).toBeGreaterThan(freeModelsIndex);
-    expect(officialModelsIndex).toBeGreaterThan(customModelsIndex);
-    expect(siteOfficialModelsIndex).toBeGreaterThan(officialModelsIndex);
+    expect(customModelsIndex).toBeGreaterThan(usageIndex);
     expect(source).toContain('model-scope="custom"');
     expect(source).toContain('emit("loadModels")');
     expect(source).toContain("emit('saveModels', $event)");
     expect(source).toContain("emit('testModel', $event)");
-    expect(source).toContain("<FreeModelsPanel");
-    expect(source).toContain("emit('refreshFreeModels')");
-    expect(source).toContain("emit('setFreeModelEnabled'");
-    expect(source).toContain(':testing-model-id="testingModelId"');
-    expect(source).toContain("@test=\"emit('testModel', $event)\"");
-    expect(source).toContain("<OfficialModelsPanel");
-    expect(source).toContain("emit('saveOfficialToken', $event)");
-    expect(source).toContain('if (id === "official-models")');
-    expect(source).toContain('emit("loadOfficialModels")');
-    expect(source).toContain('if (id === "site-official-models")');
-    expect(source).toContain("<SiteOfficialModelsPanel");
-    expect(source).toContain("officialSiteModels");
-    expect(source).toContain("emit('saveSiteOfficialToken', $event)");
-    expect(source).toContain("emit('clearSiteOfficialToken')");
-    expect(source).toContain('emit("loadSiteOfficialModels")');
-    expect(source).toContain("emit('refreshSiteOfficialModels')");
-    expect(source).toContain("emit('setSiteOfficialModelEnabled'");
-    expect(source).toContain(':quota="siteOfficialQuota"');
   });
 
   it("connects custom model management to the existing app model state and actions", () => {
@@ -275,24 +249,11 @@ describe("SettingsPage", () => {
       ':model-saving="module.modelSaving"'
     );
     expect(featureModulesSource).toContain(
-      ':free-models-refreshing="module.freeModelsRefreshing"'
-    );
-    expect(featureModulesSource).toContain(
-      ':site-official-quota="module.siteOfficialQuota"'
-    );
-    expect(featureModulesSource).toContain(
       "@load-models=\"emit('loadModels')\""
     );
     expect(appSource).toContain('@load-models="loadModelSettings"');
     expect(appSource).toContain('@save-models="saveModelSettings"');
     expect(appSource).toContain('@test-model="testModel"');
-    expect(appSource).toContain('@refresh-free-models="refreshFreeModels"');
-    expect(appSource).toContain(
-      '@refresh-site-official-models="refreshSiteOfficialModels"'
-    );
-    expect(appSource).toContain(
-      '@set-free-model-enabled="setFreeModelEnabled"'
-    );
   });
 
   it("lets users pick UI and editor font families from appearance settings", () => {

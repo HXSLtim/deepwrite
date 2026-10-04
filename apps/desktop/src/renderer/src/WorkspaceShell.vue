@@ -541,7 +541,6 @@ const featureHost = useWorkspaceFeatureHostCoordinator({
     loadSyncLongBooks: () => loadLongBookList(),
     refreshSyncLongBook: (id) => refreshActiveLongWorkspace(id),
     loadModelSettings: () => loadModelSettings(),
-    loadOfficialModels: () => loadOfficialModels(),
     loadShortAndScriptAgentSettings: () => loadShortAndScriptAgentSettings(),
     ensureLongAgentSettingsLoaded: () => ensureLongAgentSettingsLoaded(),
     loadWorkspaceAgentSettings: () => loadWorkspaceAgentSettings(),
@@ -1389,18 +1388,7 @@ const {
   loadAppAlerts,
   closeStartupAlert,
   loadModelUsage,
-  loadOfficialModels,
-  loadSiteOfficialModels,
-  saveOfficialToken,
-  clearOfficialToken,
-  saveSiteOfficialToken,
-  clearSiteOfficialToken,
-  refreshSiteOfficialModels,
-  setSiteOfficialModelEnabled,
-  setOfficialModelEnabled,
   saveModelSettings,
-  refreshFreeModels,
-  setFreeModelEnabled,
   testModel,
   loadShortAndScriptAgentSettings,
   loadLongAgentSettings,
@@ -2476,17 +2464,6 @@ onBeforeUnmount(() => {
     @load-models="loadModelSettings"
     @save-models="saveModelSettings"
     @test-model="testModel"
-    @load-official-models="loadOfficialModels"
-    @load-site-official-models="loadSiteOfficialModels"
-    @save-official-token="saveOfficialToken"
-    @clear-official-token="clearOfficialToken"
-    @save-site-official-token="saveSiteOfficialToken"
-    @clear-site-official-token="clearSiteOfficialToken"
-    @refresh-site-official-models="refreshSiteOfficialModels"
-    @set-site-official-model-enabled="setSiteOfficialModelEnabled"
-    @set-official-model-enabled="setOfficialModelEnabled"
-    @refresh-free-models="refreshFreeModels"
-    @set-free-model-enabled="setFreeModelEnabled"
   />
   <div
     v-else
@@ -2560,7 +2537,6 @@ onBeforeUnmount(() => {
       @reset-workspace-directory="featureHost.resetWorkspaceDirectory"
       @save-models="saveModelSettings"
       @test-model="testModel"
-      @open-official-models="featureHost.openOfficialModelsSettings"
       @refresh-catalog="loadCatalogSnapshot"
       @marketplace-session-change="featureHost.applyMarketplaceSession"
     />

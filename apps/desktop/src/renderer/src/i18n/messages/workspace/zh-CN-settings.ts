@@ -76,33 +76,11 @@ export default {
     workingDirectoryRestoredToItsDefaultLocationExistingProjects:
       "工作目录已恢复默认位置；现有项目保持原位置不变"
   },
-  modelProviderGroups: {
-    deepwriteFreeModels: "DeepWrite 免费模型",
-    legacyOfficialSiteModels: "旧官方小站模型"
-  },
   modelSettingsCoordinator: {
     failedToLoadModelUsage: "加载模型用量失败。",
-    failedToQueryOfficialModelSpending: "查询官方模型消费信息失败。",
-    failedToLoadOfficialModels: "加载官方模型失败。",
-    officialTokenSavedSecurelyOfficialModelsAreReadyTo:
-      "官方令牌已安全保存，官方模型现在可以直接使用。",
-    failedToSaveOfficialToken: "保存官方令牌失败。",
-    officialTokenRemovedUsageHistoryRemainsInTheLocal:
-      "官方令牌已移除，历史用量仍保留在本机账本中。",
-    failedToRemoveOfficialToken: "移除官方令牌失败。",
-    modelEnabledAndAddedToModelSettings: "模型已启用，并显示在模型配置中。",
-    modelDisabledAndHiddenFromModelSettings: "模型已停用，并从模型配置中隐藏。",
-    failedToUpdateModelStatus: "更新模型启用状态失败。",
     modelSettingsSavedAndAppliedToSubsequentConversations:
       "模型配置已保存，并已同步到后续对话。",
     failedToSaveModelSettings: "保存模型配置失败。",
-    freeModelListRefreshed: "免费模型列表已刷新。",
-    failedToRefreshFreeModelSettings: "刷新免费模型配置失败。",
-    freeModelEnabledAndAddedToModelSettings:
-      "免费模型已启用，并显示在模型配置中。",
-    freeModelDisabledAndHiddenFromModelSettings:
-      "免费模型已停用，并从模型配置中隐藏。",
-    failedToUpdateFreeModelStatus: "更新免费模型启用状态失败。",
     modelConnectionTestFailed: "模型连接测试失败。"
   },
   appearanceThemeRuntime: {

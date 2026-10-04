@@ -2,7 +2,6 @@
 import { createScopedTranslator } from "../i18n";
 import { computed, nextTick, ref } from "vue";
 import {
-  isDeepWriteSiteOfficialModel,
   type ModelConfigInput,
   type ModelSettings,
   type ModelSettingsInput
@@ -32,7 +31,6 @@ const props = withDefaults(
     modelError: string | null;
     modelTestMessage: string | null;
     testingModelId: string | null;
-    modelAlertMessages: readonly string[];
   }>(),
   {
     active: false,
@@ -44,7 +42,6 @@ const props = withDefaults(
 const emit = defineEmits<{
   saveModels: [settings: ModelSettingsInput];
   testModel: [model: ModelConfigInput];
-  openOfficialModels: [];
 }>();
 
 const modelConfigScrollArea = ref<HTMLElement | null>(null);
@@ -102,23 +99,6 @@ const knownUserProviders = computed(() =>
 
     <div class="dialog-content model-config-content">
       <div ref="modelConfigScrollArea" class="model-config-scroll-area">
-        <div
-          v-if="modelScope === 'all' && modelAlertMessages.length > 0"
-          class="dialog-description model-price-notice"
-          :aria-label="t('modelAnnouncements')"
-        >
-          <button
-            v-for="(message, index) in modelAlertMessages"
-            :key="`${index}:${message}`"
-            class="model-price-notice-link"
-            type="button"
-            :title="t('configureOfficialModels')"
-            @click="emit('openOfficialModels')"
-          >
-            {{ message }}
-          </button>
-        </div>
-
         <div v-if="modelLoading" class="dialog-note">
           {{ t("readingModelSettings") }}
         </div>
@@ -212,15 +192,7 @@ const knownUserProviders = computed(() =>
                   <div class="model-config-details">
                     <strong>{{ row.model.label }}</strong>
                     <small>
-                      {{
-                        row.model.managedBy === "deepwrite-official"
-                          ? t("legacyOfficialModels")
-                          : row.model.managedBy === "deepwrite-free"
-                            ? isDeepWriteSiteOfficialModel(row.model)
-                              ? t("officialSiteModels")
-                              : t("deepWriteFreeModels")
-                            : row.model.provider
-                      }}
+                      {{ row.model.provider }}
                       · {{ row.model.modelId }} · {{ row.model.api }}
                     </small>
                     <small>
@@ -239,9 +211,7 @@ const knownUserProviders = computed(() =>
                       {{
                         row.model.hasApiKey || row.model.apiKey
                           ? t("keyConfigured")
-                          : row.model.managedBy
-                            ? t("managedAccess")
-                            : t("noKeyConfigured")
+                          : t("noKeyConfigured")
                       }}
                     </small>
                   </div>

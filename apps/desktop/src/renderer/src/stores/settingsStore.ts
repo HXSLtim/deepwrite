@@ -11,8 +11,6 @@ import type {
   ModelSettings,
   ModelUsageDashboard,
   ModelUsageQueryInput,
-  OfficialModelBalance,
-  SiteOfficialQuota,
   WorkspaceAgentSettings,
   WorkspaceDirectorySettings
 } from "@deepwrite/contracts";
@@ -29,7 +27,6 @@ const t = createScopedTranslator("workspace.settingsStore");
 export type SettingsLoadDomain =
   | "general"
   | "models"
-  | "officialModels"
   | "workspaceAgents"
   | "longAgents"
   | "agentTeams"
@@ -37,16 +34,9 @@ export type SettingsLoadDomain =
   | "workspaceDirectory"
   | "cloudBackup";
 
-export interface OfficialModelsSnapshot {
-  settings: ModelSettings;
-  usageDashboard: ModelUsageDashboard | null;
-  balance: OfficialModelBalance | null;
-}
-
 export interface SettingsDomainValueMap {
   general: GeneralSettings;
   models: ModelSettings;
-  officialModels: OfficialModelsSnapshot;
   workspaceAgents: WorkspaceAgentSettings[];
   longAgents: LongAgentSettings;
   agentTeams: AgentTeamCatalogSnapshot;
@@ -101,11 +91,6 @@ export const useSettingsStore = defineStore("settings", () => {
   const modelLoading = ref(false);
   const modelSaving = ref(false);
   const modelsLoaded = ref(false);
-  const freeModelsRefreshing = ref(false);
-  const freeModelsSaving = ref(false);
-  const siteOfficialModelsRefreshing = ref(false);
-  const siteOfficialModelsSaving = ref(false);
-  const siteOfficialQuota = shallowRef<SiteOfficialQuota | null>(null);
   const modelError = ref<string | null>(null);
   const modelTestMessage = ref<string | null>(null);
   const testingModelId = ref<string | null>(null);
@@ -114,24 +99,13 @@ export const useSettingsStore = defineStore("settings", () => {
     contextWindow: number;
     maxTokens: number;
   } | null>(null);
-  const modelAlertMessages = shallowRef<string[]>([
-    t("officialModelsAreNowAvailableWithDirectProviderAccess")
-  ]);
+  const modelAlertMessages = shallowRef<string[]>([]);
   const startupAlertMessages = shallowRef<string[]>([]);
   const startupAlertRevision = ref("");
   const modelUsageDashboard = shallowRef<ModelUsageDashboard | null>(null);
   const modelUsageLoading = ref(false);
   const modelUsageError = ref<string | null>(null);
   const modelUsageQuery = shallowRef<ModelUsageQueryInput>({});
-
-  const officialModelUsageDashboard = shallowRef<ModelUsageDashboard | null>(
-    null
-  );
-  const officialModelBalance = shallowRef<OfficialModelBalance | null>(null);
-  const officialModelsLoading = ref(false);
-  const officialModelsSaving = ref(false);
-  const officialModelsLoaded = ref(false);
-  const officialModelsLoadError = ref<string | null>(null);
 
   const workspaceAgentSettings = shallowRef<WorkspaceAgentSettings[]>(
     cloneDefaultWorkspaceAgentSettings()
@@ -186,11 +160,6 @@ export const useSettingsStore = defineStore("settings", () => {
       loading: modelLoading,
       error: modelError
     },
-    officialModels: {
-      loaded: officialModelsLoaded,
-      loading: officialModelsLoading,
-      error: officialModelsLoadError
-    },
     workspaceAgents: {
       loaded: workspaceAgentsLoaded,
       loading: workspaceAgentLoading,
@@ -227,7 +196,6 @@ export const useSettingsStore = defineStore("settings", () => {
   const loadEpochs: Record<SettingsLoadDomain, number> = {
     general: 0,
     models: 0,
-    officialModels: 0,
     workspaceAgents: 0,
     longAgents: 0,
     agentTeams: 0,
@@ -244,12 +212,6 @@ export const useSettingsStore = defineStore("settings", () => {
         return generalSettings.value as SettingsDomainValueMap[Domain];
       case "models":
         return modelSettings.value as SettingsDomainValueMap[Domain];
-      case "officialModels":
-        return {
-          settings: modelSettings.value,
-          usageDashboard: officialModelUsageDashboard.value,
-          balance: officialModelBalance.value
-        } as SettingsDomainValueMap[Domain];
       case "workspaceAgents":
         return workspaceAgentSettings.value as SettingsDomainValueMap[Domain];
       case "longAgents":
@@ -279,16 +241,6 @@ export const useSettingsStore = defineStore("settings", () => {
       case "models":
         modelSettings.value = value as SettingsDomainValueMap["models"];
         break;
-      case "officialModels": {
-        const snapshot = value as SettingsDomainValueMap["officialModels"];
-        // Official refreshes also return the complete model configuration.
-        // Supersede an older in-flight models request so it cannot overwrite
-        // the newer official snapshot when it resolves late.
-        markLoaded("models", snapshot.settings);
-        officialModelUsageDashboard.value = snapshot.usageDashboard;
-        officialModelBalance.value = snapshot.balance;
-        break;
-      }
       case "workspaceAgents":
         workspaceAgentSettings.value =
           value as SettingsDomainValueMap["workspaceAgents"];
@@ -385,12 +337,6 @@ export const useSettingsStore = defineStore("settings", () => {
     return ensureLoaded("models", loader);
   }
 
-  function ensureOfficialModelsLoaded(
-    loader: SettingsLoader<"officialModels">
-  ) {
-    return ensureLoaded("officialModels", loader);
-  }
-
   function ensureWorkspaceAgentsLoaded(
     loader: SettingsLoader<"workspaceAgents">
   ) {
@@ -430,11 +376,6 @@ export const useSettingsStore = defineStore("settings", () => {
     modelLoading,
     modelSaving,
     modelsLoaded,
-    freeModelsRefreshing,
-    freeModelsSaving,
-    siteOfficialModelsRefreshing,
-    siteOfficialModelsSaving,
-    siteOfficialQuota,
     modelError,
     modelTestMessage,
     testingModelId,
@@ -446,12 +387,6 @@ export const useSettingsStore = defineStore("settings", () => {
     modelUsageLoading,
     modelUsageError,
     modelUsageQuery,
-    officialModelUsageDashboard,
-    officialModelBalance,
-    officialModelsLoading,
-    officialModelsSaving,
-    officialModelsLoaded,
-    officialModelsLoadError,
     workspaceAgentSettings,
     workspaceAgentLoading,
     workspaceAgentSaving,
@@ -483,7 +418,6 @@ export const useSettingsStore = defineStore("settings", () => {
     cloudBackupLoadError,
     ensureLoaded,
     ensureModelsLoaded,
-    ensureOfficialModelsLoaded,
     ensureWorkspaceAgentsLoaded,
     ensureLongAgentsLoaded,
     ensureAgentTeamsLoaded,

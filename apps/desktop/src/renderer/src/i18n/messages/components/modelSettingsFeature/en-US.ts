@@ -1,7 +1,5 @@
 export default {
   customModelSettings: "Custom model settings",
-  modelAnnouncements: "Model announcements",
-  configureOfficialModels: "Configure official models",
   readingModelSettings: "Reading model settings…",
   providers: " providers",
   models: " models",
@@ -12,13 +10,9 @@ export default {
     "After adding a custom model, test its connection, manage its key, and set it as the global default here.",
   thisConversationStillUsesDeepWriteFauxAddAModel:
     "This conversation still uses DeepWrite Faux. Add a model and set it as default to use a live provider for new requests.",
-  legacyOfficialModels: "Legacy official models",
-  officialSiteModels: "Official site models",
-  deepWriteFreeModels: "DeepWrite free models",
   reasoningValue: "Reasoning: {arg0}",
   temperatureValue: "Temperature: {arg0}",
   keyConfigured: "Key configured",
-  managedAccess: "Managed access",
   noKeyConfigured: "No key configured",
   saving: "Saving…",
   default: "Default",

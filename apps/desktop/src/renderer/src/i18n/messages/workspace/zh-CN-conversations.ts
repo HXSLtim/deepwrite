@@ -86,9 +86,7 @@ export default {
       "历史记录暂时无法完整读取，原始记录已保留。"
   },
   conversationModelOptions: {
-    officialSite: "官方小站",
     customModels: "自定义模型",
-    freeModels: "免费模型",
     minimal: "最低",
     low: "较低",
     medium: "标准",

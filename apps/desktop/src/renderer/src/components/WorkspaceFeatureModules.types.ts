@@ -12,8 +12,6 @@ import type {
   MarketplaceSession,
   ModelSettings,
   ModelUsageDashboard,
-  OfficialModelBalance,
-  SiteOfficialQuota,
   SkillLibrary,
   TextViewMode,
   WorkspacePaneLayout,
@@ -55,18 +53,9 @@ export interface SettingsFeatureModule {
   modelSettings: ModelSettings | null;
   modelLoading: boolean;
   modelSaving: boolean;
-  freeModelsRefreshing: boolean;
-  freeModelsSaving: boolean;
-  siteOfficialModelsRefreshing: boolean;
-  siteOfficialModelsSaving: boolean;
-  siteOfficialQuota: SiteOfficialQuota | null;
   modelError: string | null;
   modelTestMessage: string | null;
   testingModelId: string | null;
-  officialModelUsageDashboard: ModelUsageDashboard | null;
-  officialModelBalance: OfficialModelBalance | null;
-  officialModelsLoading: boolean;
-  officialModelsSaving: boolean;
   runtimeAvailable: boolean;
 }
 

@@ -1,9 +1,6 @@
-import { createScopedTranslator } from "../i18n";
 import { computed, ref, type Ref } from "vue";
 import { MODEL_PROVIDER_OPTIONS } from "../components/modelProviderPresets";
 import type { ModelConfigRow } from "../components/modelSettingsDraft";
-
-const t = createScopedTranslator("workspace.modelProviderGroups");
 
 export function useModelProviderGroups(rows: Ref<ModelConfigRow[]>) {
   const expandedProviders = ref(new Set<string>());
@@ -22,13 +19,9 @@ export function useModelProviderGroups(rows: Ref<ModelConfigRow[]>) {
         currentGroup = groups.get(key);
         if (!currentGroup) {
           const label =
-            model.managedBy === "deepwrite-free"
-              ? t("deepwriteFreeModels")
-              : model.managedBy === "deepwrite-official"
-                ? t("legacyOfficialSiteModels")
-                : (MODEL_PROVIDER_OPTIONS.find(
-                    (option) => option.value === model.provider
-                  )?.label ?? model.provider);
+            MODEL_PROVIDER_OPTIONS.find(
+              (option) => option.value === model.provider
+            )?.label ?? model.provider;
           currentGroup = { key, label, count: 0, rows: [] };
           groups.set(key, currentGroup);
         }

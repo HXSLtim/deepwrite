@@ -11,27 +11,12 @@ import settingsSource from "./stores/settingsStore.ts?raw";
 const featureHostSource = `${featureHostCoordinatorSource}\n${featureHostModuleSource}`;
 
 describe("App remote alerts", () => {
-  it("loads alerts at startup while keeping a model notice fallback", () => {
+  it("loads alerts at startup", () => {
     expect(source).toMatch(
       /startDesktopSideEffects:[\s\S]*?loadAppAlerts\(\)/u
     );
     expect(source).toContain("useSettingsFeatureCoordinator({");
     expect(modelCoordinatorSource).toContain("await api.get()");
-    expect(settingsSource).toContain(
-      "officialModelsAreNowAvailableWithDirectProviderAccess"
-    );
-    expect(source).toContain(
-      '@open-official-models="featureHost.openOfficialModelsSettings"'
-    );
-    expect(featureHostSource).toContain(
-      'issueBackground(() => openSettings("official-models"))'
-    );
-    expect(featureHostSource).toContain(
-      'if (initialCategory === "official-models")'
-    );
-    expect(featureHostSource).toContain(
-      "issueBackground(options.loaders.loadOfficialModels)"
-    );
   });
 
   it("shows unseen desktop content and acknowledges it when dismissed", () => {

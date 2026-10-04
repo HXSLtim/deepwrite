@@ -1,7 +1,5 @@
 export default {
   customModelSettings: "自定义模型配置",
-  modelAnnouncements: "模型公告",
-  configureOfficialModels: "前往设置官方模型",
   readingModelSettings: "正在读取模型配置…",
   providers: "个提供商",
   models: "个模型",
@@ -12,13 +10,9 @@ export default {
     "添加自定义模型后，可在这里测试连接、维护密钥并设为全局默认模型。",
   thisConversationStillUsesDeepWriteFauxAddAModel:
     "当前对话继续使用 DeepWrite Faux。添加模型并设为默认后，新的请求会走真实 Provider。",
-  legacyOfficialModels: "旧官方小站模型",
-  officialSiteModels: "新官方小站模型",
-  deepWriteFreeModels: "DeepWrite 免费模型",
   reasoningValue: "思考：{arg0}",
   temperatureValue: "温度：{arg0}",
   keyConfigured: "密钥已配置",
-  managedAccess: "托管接入",
   noKeyConfigured: "未配置密钥",
   saving: "保存中…",
   default: "默认",

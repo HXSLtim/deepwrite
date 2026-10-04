@@ -92,9 +92,7 @@ export default {
       "History could not be fully read. The original records have been preserved."
   },
   conversationModelOptions: {
-    officialSite: "Official site",
     customModels: "Custom models",
-    freeModels: "Free models",
     minimal: "Minimal",
     low: "Low",
     medium: "Medium",

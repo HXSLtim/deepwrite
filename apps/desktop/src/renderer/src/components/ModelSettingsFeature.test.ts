@@ -45,8 +45,7 @@ describe("ModelSettingsFeature DeepWrite free models", () => {
     expect(source).not.toContain('emit("refreshFreeModels")');
   });
 
-  it("renders managed free models as read-only cards with default and test actions", () => {
-    expect(featureSource).toContain("deepWriteFreeModels");
+  it("renders managed models as read-only cards with default and test actions", () => {
     expect(featureSource).toContain('v-if="!row.model.managedBy"');
     expect(featureSource).toContain("setDefaultModel(row.model.id)");
     expect(featureSource).toContain("testDraftModel(row.model)");
@@ -170,25 +169,13 @@ describe("ModelSettingsFeature provider presets", () => {
   });
 });
 
-describe("ModelSettingsFeature official models", () => {
-  it("keeps official models selectable but hides edit and delete actions", () => {
-    expect(source).toContain("legacyOfficialModels");
-    expect(source).toContain("officialSiteModels");
+describe("ModelSettingsFeature managed models", () => {
+  it("keeps managed models selectable but hides edit and delete actions", () => {
     expect(source).toContain('v-if="!row.model.managedBy"');
     expect(source).toContain("requestModelId: model.requestModelId");
     expect(source).toContain(
       "supportsDeveloperRole: model.supportsDeveloperRole"
     );
-  });
-
-  it("shows the official model price notice in place of the configuration note", () => {
-    expect(source).toContain('class="dialog-description model-price-notice"');
-    expect(source).toContain('v-for="(message, index) in modelAlertMessages"');
-    expect(source).toContain("{{ message }}");
-    expect(source).toContain("@click=\"emit('openOfficialModels')\"");
-    expect(source).toContain("configureOfficialModels");
-    expect(source).not.toContain("官方模型已经上线！直连厂商！");
-    expect(source).not.toContain("配置会同时用于连接测试与实际对话");
   });
 });
 

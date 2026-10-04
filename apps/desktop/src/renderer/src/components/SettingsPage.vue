@@ -18,8 +18,6 @@ import {
   type ModelSettingsInput,
   type ModelUsageDashboard,
   type ModelUsageQueryInput,
-  type OfficialModelBalance,
-  type SiteOfficialQuota,
   type TextViewMode,
   type WorkspacePaneLayout,
   type WorkspaceAgentSettings,
@@ -28,7 +26,6 @@ import {
 import AppIcon from "./AppIcon.vue";
 import WorkspaceDirectoryFeature from "./WorkspaceDirectoryFeature.vue";
 import AppearanceSettingsPanel from "./AppearanceSettingsPanel.vue";
-import FreeModelsPanel from "./FreeModelsPanel.vue";
 import BodyTextSettingsPanel from "./BodyTextSettingsPanel.vue";
 import ConfigurationSettingsPanel from "./ConfigurationSettingsPanel.vue";
 import GeneralSettingsPanel from "./GeneralSettingsPanel.vue";
@@ -36,9 +33,7 @@ import StorageSettingsPanel from "./StorageSettingsPanel.vue";
 import LibraryAgentSettingsPanel from "./LibraryAgentSettingsPanel.vue";
 import ModelSettingsFeature from "./ModelSettingsFeature.vue";
 import ModelUsagePanel from "./ModelUsagePanel.vue";
-import OfficialModelsPanel from "./OfficialModelsPanel.vue";
 import ShortAgentSettingsPanel from "./ShortAgentSettingsPanel.vue";
-import SiteOfficialModelsPanel from "./SiteOfficialModelsPanel.vue";
 import VoiceSettingsPanel from "./VoiceSettingsPanel.vue";
 
 const ArchivedConversationsPanel = defineAsyncComponent(
@@ -98,18 +93,9 @@ const props = defineProps<{
   modelSettings: ModelSettings | null;
   modelLoading: boolean;
   modelSaving: boolean;
-  freeModelsRefreshing: boolean;
-  freeModelsSaving: boolean;
-  siteOfficialModelsRefreshing: boolean;
-  siteOfficialModelsSaving: boolean;
-  siteOfficialQuota: SiteOfficialQuota | null;
   modelError: string | null;
   modelTestMessage: string | null;
   testingModelId: string | null;
-  officialModelUsageDashboard: ModelUsageDashboard | null;
-  officialModelBalance: OfficialModelBalance | null;
-  officialModelsLoading: boolean;
-  officialModelsSaving: boolean;
   libraryAgentSettings: LibraryAgentSettings | null;
   libraryAgentLoading: boolean;
   libraryAgentSaving: boolean;
@@ -141,17 +127,6 @@ const emit = defineEmits<{
   loadModels: [];
   saveModels: [settings: ModelSettingsInput];
   testModel: [model: ModelConfigInput];
-  loadOfficialModels: [];
-  loadSiteOfficialModels: [];
-  saveOfficialToken: [apiKey: string];
-  clearOfficialToken: [];
-  saveSiteOfficialToken: [apiKey: string];
-  clearSiteOfficialToken: [];
-  refreshSiteOfficialModels: [];
-  setSiteOfficialModelEnabled: [modelId: string, enabled: boolean];
-  setOfficialModelEnabled: [modelId: string, enabled: boolean];
-  refreshFreeModels: [];
-  setFreeModelEnabled: [modelId: string, enabled: boolean];
 }>();
 const activeCategory = ref(props.initialCategory ?? "general");
 const searchQuery = ref("");
@@ -217,30 +192,9 @@ const sections: SettingsSection[] = [
         icon: "ledger"
       },
       {
-        id: "free-models",
-        get label() {
-          return t("freeModels");
-        },
-        icon: "model"
-      },
-      {
         id: "custom-models",
         get label() {
           return t("customModelSettings");
-        },
-        icon: "model"
-      },
-      {
-        id: "official-models",
-        get label() {
-          return t("legacyOfficialModels");
-        },
-        icon: "model"
-      },
-      {
-        id: "site-official-models",
-        get label() {
-          return t("officialSiteModels");
         },
         icon: "model"
       },
@@ -325,14 +279,8 @@ const activeLabel = computed(() => {
 });
 
 async function selectCategory(id: string): Promise<void> {
-  if (id === "official-models") {
-    emit("loadOfficialModels");
-  }
   if (id === "custom-models") {
     emit("loadModels");
-  }
-  if (id === "site-official-models") {
-    emit("loadSiteOfficialModels");
   }
   activeCategory.value = id;
 }
@@ -439,19 +387,6 @@ async function selectCategory(id: string): Promise<void> {
           @query="emit('loadModelUsage', $event)"
         />
 
-        <FreeModelsPanel
-          v-else-if="activeCategory === 'free-models'"
-          :settings="modelSettings"
-          :refreshing="freeModelsRefreshing"
-          :saving="freeModelsSaving"
-          :testing-model-id="testingModelId"
-          @refresh="emit('refreshFreeModels')"
-          @test="emit('testModel', $event)"
-          @set-model-enabled="
-            emit('setFreeModelEnabled', $event.modelId, $event.enabled)
-          "
-        />
-
         <ModelSettingsFeature
           v-else-if="activeCategory === 'custom-models'"
           model-scope="custom"
@@ -466,37 +401,6 @@ async function selectCategory(id: string): Promise<void> {
           :model-alert-messages="[]"
           @save-models="emit('saveModels', $event)"
           @test-model="emit('testModel', $event)"
-        />
-
-        <OfficialModelsPanel
-          v-else-if="activeCategory === 'official-models'"
-          :settings="modelSettings"
-          :dashboard="officialModelUsageDashboard"
-          :balance="officialModelBalance"
-          :loading="officialModelsLoading"
-          :saving="officialModelsSaving"
-          @load="emit('loadOfficialModels')"
-          @save-token="emit('saveOfficialToken', $event)"
-          @clear-token="emit('clearOfficialToken')"
-          @set-model-enabled="
-            emit('setOfficialModelEnabled', $event.modelId, $event.enabled)
-          "
-        />
-
-        <SiteOfficialModelsPanel
-          v-else-if="activeCategory === 'site-official-models'"
-          :settings="modelSettings"
-          :saving="siteOfficialModelsSaving"
-          :refreshing="siteOfficialModelsRefreshing"
-          :quota="siteOfficialQuota"
-          :testing-model-id="testingModelId"
-          @test="emit('testModel', $event)"
-          @save-token="emit('saveSiteOfficialToken', $event)"
-          @clear-token="emit('clearSiteOfficialToken')"
-          @refresh="emit('refreshSiteOfficialModels')"
-          @set-model-enabled="
-            emit('setSiteOfficialModelEnabled', $event.modelId, $event.enabled)
-          "
         />
 
         <template v-else-if="activeCategory === 'general'">

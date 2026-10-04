@@ -86,36 +86,11 @@ export default {
     workingDirectoryRestoredToItsDefaultLocationExistingProjects:
       "Working directory restored to its default location. Existing projects remain in their original locations."
   },
-  modelProviderGroups: {
-    deepwriteFreeModels: "DeepWrite free models",
-    legacyOfficialSiteModels: "Legacy official site models"
-  },
   modelSettingsCoordinator: {
     failedToLoadModelUsage: "Failed to load model usage.",
-    failedToQueryOfficialModelSpending:
-      "Failed to query official model spending.",
-    failedToLoadOfficialModels: "Failed to load official models.",
-    officialTokenSavedSecurelyOfficialModelsAreReadyTo:
-      "Official token saved securely. Official models are ready to use.",
-    failedToSaveOfficialToken: "Failed to save official token.",
-    officialTokenRemovedUsageHistoryRemainsInTheLocal:
-      "Official token removed. Usage history remains in the local ledger.",
-    failedToRemoveOfficialToken: "Failed to remove official token.",
-    modelEnabledAndAddedToModelSettings:
-      "Model enabled and added to model settings.",
-    modelDisabledAndHiddenFromModelSettings:
-      "Model disabled and hidden from model settings.",
-    failedToUpdateModelStatus: "Failed to update model status.",
     modelSettingsSavedAndAppliedToSubsequentConversations:
       "Model settings saved and applied to subsequent conversations.",
     failedToSaveModelSettings: "Failed to save model settings.",
-    freeModelListRefreshed: "Free model list refreshed.",
-    failedToRefreshFreeModelSettings: "Failed to refresh free model settings.",
-    freeModelEnabledAndAddedToModelSettings:
-      "Free model enabled and added to model settings.",
-    freeModelDisabledAndHiddenFromModelSettings:
-      "Free model disabled and hidden from model settings.",
-    failedToUpdateFreeModelStatus: "Failed to update free model status.",
     modelConnectionTestFailed: "Model connection test failed."
   },
   appearanceThemeRuntime: {

@@ -72,7 +72,6 @@ export interface WorkspaceFeatureHostCoordinatorOptions {
     loadSyncLongBooks?(): Promise<unknown>;
     refreshSyncLongBook?(id: string): Promise<unknown>;
     loadModelSettings(): Promise<unknown>;
-    loadOfficialModels(): Promise<unknown>;
     loadShortAndScriptAgentSettings(): Promise<unknown>;
     ensureLongAgentSettingsLoaded(): Promise<unknown>;
     loadWorkspaceAgentSettings(): Promise<unknown>;
@@ -92,7 +91,6 @@ export interface WorkspaceFeatureHostCoordinator {
   newConversation(): void;
   openWorkspaceDialog(mode: DialogMode): Promise<void>;
   openSettings(category?: string): Promise<void>;
-  openOfficialModelsSettings(): void;
   openAgentTeams(): Promise<void>;
   openMarketplace(): Promise<void>;
   openDeviceSync(): Promise<void>;

@@ -109,7 +109,6 @@ function createHarness(overrides: HarnessOverrides = {}) {
   let runtimeAvailable = overrides.runtimeAvailable ?? true;
   const loaders = {
     loadModelSettings: vi.fn(async () => undefined),
-    loadOfficialModels: vi.fn(async () => undefined),
     loadShortAndScriptAgentSettings: vi.fn(async () => undefined),
     ensureLongAgentSettingsLoaded: vi.fn(async () => undefined),
     loadWorkspaceAgentSettings: vi.fn(async () => undefined),
@@ -375,20 +374,18 @@ describe("useWorkspaceFeatureHostCoordinator", () => {
     expect(harness.loaders.loadModelSettings).toHaveBeenCalledTimes(2);
   });
 
-  it("preserves normal and official settings loading boundaries", async () => {
+  it("preserves settings loading boundaries when reopening the page", async () => {
     const harness = createHarness();
 
     await harness.coordinator.openSettings("general");
     expect(harness.currentView.value).toBe("settings");
     expect(harness.loaders.loadModelSettings).toHaveBeenCalledOnce();
-    expect(harness.loaders.loadOfficialModels).not.toHaveBeenCalled();
     expect(harness.loaders.loadWorkspaceAgentSettings).toHaveBeenCalledOnce();
     expect(harness.loaders.loadLibraryAgentSettings).toHaveBeenCalledOnce();
 
     harness.coordinator.closeSettings();
-    await harness.coordinator.openSettings("official-models");
-    expect(harness.loaders.loadOfficialModels).toHaveBeenCalledOnce();
-    expect(harness.loaders.loadModelSettings).toHaveBeenCalledOnce();
+    await harness.coordinator.openSettings("custom-models");
+    expect(harness.currentView.value).toBe("settings");
   });
 
   it("keeps the current page usable when a settings chunk cannot load", async () => {
@@ -416,7 +413,7 @@ describe("useWorkspaceFeatureHostCoordinator", () => {
     const loading = vi.fn(() => pending.promise);
     vi.mocked(loadSettingsFeature).mockImplementationOnce(loading);
     const harness = createHarness();
-    const opening = harness.coordinator.openSettings("official-models");
+    const opening = harness.coordinator.openSettings("custom-models");
     await vi.waitFor(() => expect(loading).toHaveBeenCalledOnce());
     expect(harness.currentView.value).toBe("workspace");
 
@@ -426,7 +423,6 @@ describe("useWorkspaceFeatureHostCoordinator", () => {
 
     expect(harness.currentView.value).toBe("workspace");
     expect(harness.workspaceMainView.value).toBe("cloud-backup");
-    expect(harness.loaders.loadOfficialModels).not.toHaveBeenCalled();
   });
 
   it("contains rejecting background loaders without changing the selected page", async () => {
