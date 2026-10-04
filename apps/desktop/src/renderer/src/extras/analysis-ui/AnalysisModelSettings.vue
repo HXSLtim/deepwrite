@@ -34,9 +34,7 @@ const panel = ref<HTMLElement | null>(null);
 const modelControl = ref<InstanceType<typeof PopupSelect> | null>(null);
 const thinkingControl = ref<InstanceType<typeof PopupSelect> | null>(null);
 const position = ref({ top: "0px", left: "0px" });
-const availableModels = computed(() =>
-  props.models.filter((model) => model.enabled !== false)
-);
+const availableModels = computed(() => [...props.models]);
 const selectedModel = computed(() =>
   availableModels.value.find((model) => model.id === props.modelId)
 );

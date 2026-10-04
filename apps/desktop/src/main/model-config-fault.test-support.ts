@@ -108,24 +108,7 @@ export const replacementInput = {
 export async function fixture() {
   const root = await mkdtemp(join(tmpdir(), "deepwrite-model-atomic-"));
   roots.push(root);
-  const reader = {
-    initialize: async () => undefined,
-    getCatalog: async () => ({
-      revision: "",
-      enabled: false,
-      message: "",
-      manifestAvailable: false,
-      canDeprecateMissingModels: false,
-      defaultModelId: "",
-      models: [],
-      apiKeys: {}
-    })
-  };
-  const createStore = () =>
-    new ModelConfigStore(root, {
-      freeModelCatalog: reader,
-      officialModelCatalog: reader
-    });
+  const createStore = () => new ModelConfigStore(root);
   const configDirectory = join(root, "config");
   await mkdir(configDirectory);
   return {

@@ -85,8 +85,7 @@ export function createUsageModelSnapshot(
     label: config?.label ?? modelId,
     provider,
     modelId,
-    ...(api ? { api } : {}),
-    ...(config?.managedBy ? { managedBy: config.managedBy } : {})
+    ...(api ? { api } : {})
   };
 }
 

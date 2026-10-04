@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { ModelConfig, ModelSettings } from "@deepwrite/contracts";
-import { selectableModelSettings } from "./selectableModelSettings";
+import {
+  selectableModelSettings,
+  selectableModels
+} from "./selectableModelSettings";
 
-function model(id: string, enabled?: boolean): ModelConfig {
+function model(id: string): ModelConfig {
   return {
     id,
     label: id,
@@ -14,32 +17,21 @@ function model(id: string, enabled?: boolean): ModelConfig {
     defaultThinkingLevel: "off",
     thinkingLevelOptions: ["low"],
     temperatureOptions: [0.1, 0.7, 1],
-    hasApiKey: true,
-    ...(enabled === undefined ? {} : { enabled })
+    hasApiKey: true
   };
 }
 
 describe("selectableModelSettings", () => {
-  it("hides only disabled new-site models and repairs their default", () => {
-    const disabled = model("deepwrite-site-official-example", false);
-    const custom = model("custom");
+  it("keeps every configured model selectable", () => {
     const settings: ModelSettings = {
-      models: [disabled, custom],
-      defaultModelId: disabled.id
+      models: [model("custom-a"), model("custom-b")],
+      defaultModelId: "custom-b"
     };
 
-    expect(selectableModelSettings(settings)).toEqual({
-      ...settings,
-      models: [custom],
-      defaultModelId: custom.id
-    });
-  });
-
-  it("preserves the original snapshot when nothing is filtered", () => {
-    const settings: ModelSettings = {
-      models: [model("deepwrite-site-official-example", true)],
-      defaultModelId: "deepwrite-site-official-example"
-    };
+    expect(selectableModels(settings.models).map((entry) => entry.id)).toEqual([
+      "custom-a",
+      "custom-b"
+    ]);
     expect(selectableModelSettings(settings)).toBe(settings);
   });
 });

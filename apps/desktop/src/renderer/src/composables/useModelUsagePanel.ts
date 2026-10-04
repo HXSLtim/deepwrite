@@ -1,10 +1,9 @@
 import { createScopedTranslator, locale } from "../i18n";
 import { computed, onMounted, ref } from "vue";
-import {
-  isDeepWriteSiteOfficialModel,
-  type ModelUsageDashboard,
-  type ModelUsageModule,
-  type ModelUsageQueryInput
+import type {
+  ModelUsageDashboard,
+  ModelUsageModule,
+  ModelUsageQueryInput
 } from "@deepwrite/contracts/renderer";
 import { MODULE_META } from "../components/modelUsageModuleMeta";
 
@@ -241,18 +240,13 @@ export function useModelUsagePanel(
   function modelProviderLabel(
     model: ModelUsageDashboard["models"][number]["model"]
   ): string {
-    if (model.managedBy === "deepwrite-official")
-      return t("legacyOfficialSite");
-    if (isDeepWriteSiteOfficialModel(model)) return t("newOfficialSite");
-    if (model.managedBy === "deepwrite-free") return t("deepwriteFree");
     return model.provider;
   }
 
   function modelBadgeLabel(
     model: ModelUsageDashboard["models"][number]["model"]
   ): string {
-    const source = model.managedBy ? "D" : model.provider.trim().slice(0, 1);
-    return source.toLocaleUpperCase() || "M";
+    return model.provider.trim().slice(0, 1).toLocaleUpperCase() || "M";
   }
 
   function actorLabel(

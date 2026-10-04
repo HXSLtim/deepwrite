@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { EnvelopeBaseSchema } from "./envelope";
 import { AgentUsageSchema } from "./agent-usage";
-import { ModelManagedBySchema } from "./models";
 
 export const MODEL_USAGE_MODULES = [
   "short-writing",
@@ -45,8 +44,7 @@ export const ModelUsageModelSnapshotSchema = z.object({
   label: z.string().trim().min(1).max(120),
   provider: z.string().trim().min(1).max(120),
   modelId: z.string().trim().min(1).max(240),
-  api: z.string().trim().min(1).max(120).optional(),
-  managedBy: ModelManagedBySchema.optional()
+  api: z.string().trim().min(1).max(120).optional()
 });
 export type ModelUsageModelSnapshot = z.infer<
   typeof ModelUsageModelSnapshotSchema
@@ -71,7 +69,6 @@ export const ModelUsageQueryInputSchema = z
       .array(z.string().trim().min(1).max(120))
       .max(100)
       .optional(),
-    managedBy: ModelManagedBySchema.optional(),
     modules: z
       .array(ModelUsageModuleSchema)
       .max(MODEL_USAGE_MODULES.length)

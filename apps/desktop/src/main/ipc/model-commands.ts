@@ -1,4 +1,3 @@
-import { runSiteOfficialOperation } from "./site-official-operation";
 import {
   AgentProviderRuntimeConfigSchema,
   CommandEnvelopeSchema,
@@ -15,8 +14,6 @@ import {
 import { createUsageModelSnapshot } from "../usage-observation";
 import { safeErrorDetails } from "./errors";
 import type { IpcCommandContext } from "./command-types";
-import { handleOfficialModelCommands } from "./official-model-commands";
-import { handleSiteOfficialModelCommands } from "./site-official-model-commands";
 
 export type ModelCommandContext = Pick<
   IpcCommandContext,
@@ -32,14 +29,6 @@ async function dispatchModelCommand(
   ctx: ModelCommandContext,
   command: CommandEnvelope
 ): Promise<CommandResult | undefined> {
-  const siteOfficialResult = await handleSiteOfficialModelCommands(
-    ctx,
-    command
-  );
-  if (siteOfficialResult) return siteOfficialResult;
-  const officialResult = await handleOfficialModelCommands(ctx, command);
-  if (officialResult) return officialResult;
-
   if (command.type === "models.list") {
     try {
       return {
@@ -57,60 +46,6 @@ async function dispatchModelCommand(
           code: "models.list_failed",
           message:
             error instanceof Error ? error.message : "加载模型配置失败。",
-          details: safeErrorDetails(error)
-        }
-      };
-    }
-  }
-
-  if (command.type === "models.refreshFree") {
-    try {
-      const settings = ModelSettingsSchema.parse(
-        await ctx.requireModelConfigStore().refreshFreeModels()
-      );
-      await ctx.requireModelUsageStore().syncConfiguredModels(settings.models);
-      return {
-        status: "accepted",
-        requestId: command.id,
-        payload: settings
-      };
-    } catch (error: unknown) {
-      return {
-        status: "rejected",
-        requestId: command.id,
-        error: {
-          code: "models.refresh_free_failed",
-          message:
-            error instanceof Error ? error.message : "刷新免费模型配置失败。",
-          details: safeErrorDetails(error)
-        }
-      };
-    }
-  }
-
-  if (command.type === "models.setFreeModelEnabled") {
-    try {
-      const settings = ModelSettingsSchema.parse(
-        await ctx
-          .requireModelConfigStore()
-          .setFreeModelEnabled(command.payload.modelId, command.payload.enabled)
-      );
-      await ctx.requireModelUsageStore().syncConfiguredModels(settings.models);
-      return {
-        status: "accepted",
-        requestId: command.id,
-        payload: settings
-      };
-    } catch (error: unknown) {
-      return {
-        status: "rejected",
-        requestId: command.id,
-        error: {
-          code: "models.set_free_model_enabled_failed",
-          message:
-            error instanceof Error
-              ? error.message
-              : "更新免费模型启用状态失败。",
           details: safeErrorDetails(error)
         }
       };
@@ -321,9 +256,5 @@ export async function handleModelCommands(
   ctx: ModelCommandContext,
   command: CommandEnvelope
 ): Promise<CommandResult | undefined> {
-  if (!command.type.startsWith("models."))
-    return dispatchModelCommand(ctx, command);
-  return runSiteOfficialOperation(ctx.requireModelConfigStore(), command, () =>
-    dispatchModelCommand(ctx, command)
-  );
+  return dispatchModelCommand(ctx, command);
 }

@@ -50,7 +50,6 @@ export function applyBatchModelSettings(
   for (const remote of uniqueSelected) {
     const index = models.findIndex(
       (model) =>
-        !model.managedBy &&
         model.provider === source.provider &&
         model.api === source.api &&
         model.baseUrl === source.baseUrl &&

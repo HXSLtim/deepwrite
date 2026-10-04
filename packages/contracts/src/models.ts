@@ -18,24 +18,7 @@ export * from "./model-configuration";
 export const ModelSettingsSchema = z
   .object({
     models: z.array(ModelConfigSchema).max(100),
-    defaultModelId: z.string().max(120),
-    deepwriteFreeModels: z.array(ModelConfigSchema).max(50).optional(),
-    deepwriteFreeEnabledModelIds: z
-      .array(z.string().trim().min(1).max(120))
-      .max(50)
-      .optional(),
-    deepwriteFreeDeprecatedModels: z
-      .array(ModelConfigSchema)
-      .max(50)
-      .optional(),
-    deepwriteFreeDefaultModelId: z.string().max(120).optional(),
-    deepwriteFreeMessage: z.string().max(500).optional(),
-    deepwriteOfficialModels: z.array(ModelConfigSchema).max(50).optional(),
-    deepwriteOfficialEnabledModelIds: z
-      .array(z.string().max(120))
-      .max(50)
-      .optional(),
-    deepwriteOfficialTokenConfigured: z.boolean().optional()
+    defaultModelId: z.string().max(120)
   })
   .superRefine((value, context) => {
     if (
@@ -50,25 +33,6 @@ export const ModelSettingsSchema = z
     }
   });
 export type ModelSettings = z.infer<typeof ModelSettingsSchema>;
-
-export const OfficialModelBalanceSchema = z.object({
-  queriedAt: z.string().min(1),
-  accountBalance: z.number().int().nonnegative(),
-  accountBalanceYuan: z.number().nonnegative(),
-  keyQuotaRemaining: z.number().int().nonnegative(),
-  keyQuotaRemainingYuan: z.number().nonnegative(),
-  currentKeyRemaining: z.number().int().nonnegative().optional(),
-  currentKeyRemainingYuan: z.number().nonnegative().optional(),
-  currentKeyGranted: z.number().int().nonnegative().optional(),
-  currentKeyGrantedYuan: z.number().nonnegative().optional(),
-  currentKeyUsed: z.number().int().nonnegative().optional(),
-  currentKeyUsedYuan: z.number().nonnegative().optional(),
-  currentKeyUnlimited: z.boolean().optional(),
-  usedQuota: z.number().int().nonnegative().optional(),
-  usedYuan: z.number().nonnegative().optional(),
-  quotaPerUnit: z.number().positive()
-});
-export type OfficialModelBalance = z.infer<typeof OfficialModelBalanceSchema>;
 
 export const ModelSettingsInputSchema = z
   .object({
@@ -133,57 +97,6 @@ export const ModelsListCommandEnvelopeSchema = EnvelopeBaseSchema.extend({
   payload: z.object({})
 });
 
-export const ModelsRefreshFreeCommandEnvelopeSchema = EnvelopeBaseSchema.extend(
-  {
-    type: z.literal("models.refreshFree"),
-    payload: z.object({})
-  }
-);
-
-export const ModelsSetFreeModelEnabledCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.setFreeModelEnabled"),
-    payload: z.object({
-      modelId: z.string().trim().min(1).max(120),
-      enabled: z.boolean()
-    })
-  });
-
-export const ModelsRefreshOfficialCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.refreshOfficial"),
-    payload: z.object({})
-  });
-
-export const ModelsQueryOfficialBalanceCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.queryOfficialBalance"),
-    payload: z.object({})
-  });
-
-export const ModelsSaveOfficialTokenCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.saveOfficialToken"),
-    payload: z.object({
-      apiKey: z.string().trim().min(1).max(16_000)
-    })
-  });
-
-export const ModelsClearOfficialTokenCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.clearOfficialToken"),
-    payload: z.object({})
-  });
-
-export const ModelsSetOfficialModelEnabledCommandEnvelopeSchema =
-  EnvelopeBaseSchema.extend({
-    type: z.literal("models.setOfficialModelEnabled"),
-    payload: z.object({
-      modelId: z.string().trim().min(1).max(120),
-      enabled: z.boolean()
-    })
-  });
-
 export const ModelsSaveCommandEnvelopeSchema = EnvelopeBaseSchema.extend({
   type: z.literal("models.save"),
   payload: ModelSettingsInputSchema
@@ -229,12 +142,7 @@ export const RemoteModelListItemSchema = z.object({
   thinkingLevelOptions: ThinkingLevelOptionsSchema.removeDefault().optional(),
   temperatureOptions: TemperatureOptionsSchema.removeDefault().optional(),
   contextWindow: ModelContextWindowSchema.optional(),
-  maxTokens: ModelMaxTokensSchema.optional(),
-  status: z.union([z.literal(0), z.literal(1)]).optional(),
-  discount: z.number().finite().positive().max(1).optional(),
-  input: z.number().finite().nonnegative().optional(),
-  output: z.number().finite().nonnegative().optional(),
-  cache: z.number().finite().nonnegative().optional()
+  maxTokens: ModelMaxTokensSchema.optional()
 });
 export type RemoteModelListItem = z.infer<typeof RemoteModelListItemSchema>;
 
@@ -258,5 +166,3 @@ export const AgentModelCapacityCommandEnvelopeSchema =
     type: z.literal("agent.model_capacity"),
     payload: z.object({ runtimeConfig: AgentProviderRuntimeConfigSchema })
   });
-
-export * from "./site-official-models";

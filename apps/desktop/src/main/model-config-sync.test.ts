@@ -3,12 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SyncModelConfig, SyncModelEntry } from "@deepwrite/contracts";
-import {
-  temporaryRoots,
-  emptyCatalog,
-  customModel,
-  officialCatalog
-} from "./model-config-store.test-support";
+import { temporaryRoots, customModel } from "./model-config-store.test-support";
 
 const storage = vi.hoisted(() => ({ available: true, brokenDecrypt: false }));
 
@@ -28,18 +23,7 @@ const { ModelConfigStore } = await import("./model-config-store");
 async function createStore() {
   const root = await mkdtemp(join(tmpdir(), "deepwrite-model-sync-"));
   temporaryRoots.push(root);
-  const remoteOfficialCatalog = officialCatalog();
-  const store = new ModelConfigStore(root, {
-    freeModelCatalog: {
-      initialize: async () => undefined,
-      getCatalog: async () => emptyCatalog()
-    },
-    officialModelCatalog: {
-      initialize: async () => undefined,
-      getCatalog: async () => structuredClone(remoteOfficialCatalog),
-      refreshCatalog: async () => structuredClone(remoteOfficialCatalog)
-    }
-  });
+  const store = new ModelConfigStore(root);
   return { root, store };
 }
 
@@ -87,7 +71,6 @@ describe("ModelConfigStore device sync", () => {
       ],
       defaultModelId: "custom-writer"
     });
-    await store.saveOfficialToken("sk-official-test-only");
 
     const listed = await store.listSyncModels();
     expect(listed.map(({ model }) => model.id)).toEqual([
@@ -97,7 +80,6 @@ describe("ModelConfigStore device sync", () => {
     expect(listed[0]!.apiKey).toBe("sk-sync-test-only");
     expect(listed[1]).not.toHaveProperty("apiKey");
     expect(listed[0]!.model).not.toHaveProperty("apiKey");
-    expect(JSON.stringify(listed)).not.toContain("sk-official-test-only");
     expect(
       await readFile(join(root, "config", "models.json"), "utf8")
     ).toContain("custom-writer");
@@ -224,7 +206,8 @@ describe("ModelConfigStore device sync", () => {
       "custom-writer"
     );
     expect(state.defaultModelId).toBe("second-writer");
-    await expect(store.resolve("custom-writer")).rejects.toThrow("不存在");
+    const fallback = await store.resolve("custom-writer");
+    expect(fallback?.id).toBe("second-writer");
     expect(await storedKeyIds(root)).toEqual([]);
   });
 
@@ -294,22 +277,6 @@ describe("ModelConfigStore device sync", () => {
     ).rejects.toThrow("安全存储");
     storage.available = true;
     expect(await store.listSyncModels()).toEqual([]);
-  });
-
-  it("does not let a synced change touch a managed model", async () => {
-    const { store } = await createStore();
-    await store.saveOfficialToken("sk-official-test-only");
-
-    for (const next of [
-      null,
-      entry(synced({ id: "deepwrite-deepseek-v4-flash" }))
-    ])
-      await expect(
-        store.applySyncedModels([{ id: "deepwrite-deepseek-v4-flash", next }])
-      ).rejects.toThrow("托管");
-    expect((await store.list()).models.map((model) => model.id)).toContain(
-      "deepwrite-deepseek-v4-flash"
-    );
   });
 
   it("refuses to grow past the custom model limit", async () => {

@@ -3,12 +3,7 @@ import source from "./WorkspaceShell.vue?raw";
 import dialogLayerSource from "./components/WorkspaceDialogLayer.vue?raw";
 import modelCoordinatorSource from "./composables/useModelSettingsCoordinator.ts?raw";
 import dialogCoordinatorSource from "./composables/useWorkspaceDialogModuleCoordinator.ts?raw";
-import featureHostCoordinatorSource from "./composables/useWorkspaceFeatureHostCoordinator.ts?raw";
-import featureHostModuleSource from "./composables/workspaceFeatureHostModule.ts?raw";
 import lifecycleSource from "./composables/useWorkspaceLifecycleCoordinator.ts?raw";
-import settingsSource from "./stores/settingsStore.ts?raw";
-
-const featureHostSource = `${featureHostCoordinatorSource}\n${featureHostModuleSource}`;
 
 describe("App remote alerts", () => {
   it("loads alerts at startup", () => {

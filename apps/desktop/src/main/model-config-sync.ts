@@ -8,7 +8,7 @@ import {
   type SyncModelConfig,
   type SyncModelEntry
 } from "@deepwrite/contracts";
-import { toDiskModel, type DiskModelConfig } from "./free-model-settings-state";
+import { toDiskModel, type DiskModelConfig } from "./model-config-persistence";
 import type {
   DiskModelSecrets,
   ModelConfigState
@@ -22,7 +22,7 @@ const MAX_CUSTOM_MODELS = 100;
 export function toSyncedModel(
   model: DiskModelConfig | undefined
 ): SyncModelConfig | null {
-  if (!model || model.managedBy) return null;
+  if (!model) return null;
   try {
     return toSyncModelConfig(model);
   } catch {
@@ -62,7 +62,6 @@ export function applySyncedModelChanges(
   for (const change of changes) {
     const index = models.findIndex((model) => model.id === change.id);
     const current = models[index];
-    if (current?.managedBy) throw new Error("这个模型由 DeepWrite 托管。");
     if (
       change.expected !== undefined &&
       !syncEqual(toSyncedEntry(current, secrets), change.expected)
@@ -84,7 +83,7 @@ export function applySyncedModelChanges(
     if (index >= 0) models[index] = next;
     else models.push(next);
   }
-  if (models.filter((model) => !model.managedBy).length > MAX_CUSTOM_MODELS)
+  if (models.length > MAX_CUSTOM_MODELS)
     throw new Error("自定义模型数量已达上限，请先删除不用的模型。");
   return {
     settings: { ...settings, models },

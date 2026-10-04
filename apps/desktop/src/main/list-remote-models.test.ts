@@ -115,11 +115,7 @@ describe("listRemoteModels", () => {
         thinkingLevelOptions: ["low", "medium", "high"],
         temperatureOptions: [0.1, 0.6, 1],
         contextWindow: 1_000_000,
-        maxTokens: 128_000,
-        discount: 0.8,
-        input: 2,
-        output: 5,
-        cache: 0.2
+        maxTokens: 128_000
       }
     ]);
   });

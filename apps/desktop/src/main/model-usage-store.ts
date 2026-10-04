@@ -137,8 +137,7 @@ function sameSnapshot(
     left.label === right.label &&
     left.provider === right.provider &&
     left.modelId === right.modelId &&
-    left.api === right.api &&
-    left.managedBy === right.managedBy
+    left.api === right.api
   );
 }
 
@@ -479,8 +478,7 @@ export function createModelUsageSnapshot(
     label: parsed.label,
     provider: parsed.provider,
     modelId: parsed.modelId,
-    api: parsed.api,
-    ...(parsed.managedBy ? { managedBy: parsed.managedBy } : {})
+    api: parsed.api
   });
 }
 
@@ -579,7 +577,6 @@ export class ModelUsageStore {
       const modelConfigIds = input.modelConfigIds
         ? new Set(input.modelConfigIds)
         : undefined;
-      const managedBy = input.managedBy;
       const modules = input.modules ? new Set(input.modules) : undefined;
       const startAt = input.startAt ? toTimestamp(input.startAt) : undefined;
       const endAt = input.endAt ? toTimestamp(input.endAt) : undefined;
@@ -598,7 +595,6 @@ export class ModelUsageStore {
         };
         if (
           (modelConfigIds && !modelConfigIds.has(row.model.configId)) ||
-          (managedBy && row.model.managedBy !== managedBy) ||
           (modules && !modules.has(row.module)) ||
           !contributionOverlapsRange(contribution, startAt, endAt)
         ) {
@@ -613,7 +609,6 @@ export class ModelUsageStore {
           (startAt !== undefined && occurredAt < startAt) ||
           (endAt !== undefined && occurredAt > endAt) ||
           (modelConfigIds && !modelConfigIds.has(record.model.configId)) ||
-          (managedBy && record.model.managedBy !== managedBy) ||
           (modules && !modules.has(record.module))
         ) {
           continue;
@@ -671,7 +666,6 @@ export class ModelUsageStore {
       if (!modules) {
         for (const model of Object.values(registry.models)) {
           if (modelConfigIds && !modelConfigIds.has(model.configId)) continue;
-          if (managedBy && model.managedBy !== managedBy) continue;
           const key = registryKey(model);
           if (!modelSummaries.has(key)) {
             modelSummaries.set(key, { model, totals: emptyTotals() });
@@ -748,7 +742,6 @@ export class ModelUsageStore {
             (startAt !== undefined && occurredAt < startAt) ||
             (endAt !== undefined && occurredAt > endAt) ||
             (modelConfigIds && !modelConfigIds.has(record.model.configId)) ||
-            (managedBy && record.model.managedBy !== managedBy) ||
             (modules && !modules.has(record.module))
           );
         })

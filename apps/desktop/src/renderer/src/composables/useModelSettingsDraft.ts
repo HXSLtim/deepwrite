@@ -1,10 +1,7 @@
 import { formatError } from "../i18n/errors";
 import { createScopedTranslator } from "../i18n";
 import { computed, ref, watch } from "vue";
-import {
-  BUILT_IN_REASONING_LEVELS,
-  isDeepWriteSiteOfficialModel
-} from "@deepwrite/contracts";
+import { BUILT_IN_REASONING_LEVELS } from "@deepwrite/contracts";
 import type {
   ModelConfigInput,
   ModelSettings,
@@ -69,20 +66,12 @@ export function useModelSettingsDraft(
   });
 
   function resetModelDraft(settings: ModelSettings | null): void {
-    draftModels.value = (settings?.models ?? [])
-      .filter(
-        (model) =>
-          !isDeepWriteSiteOfficialModel(model) &&
-          (props.modelScope === "all" || !model.managedBy)
-      )
-      .map((model) =>
-        cloneDraftModel({
-          ...model,
-          customThinkingLevel: findCustomThinkingLevel(
-            model.thinkingLevelOptions
-          )
-        })
-      );
+    draftModels.value = (settings?.models ?? []).map((model) =>
+      cloneDraftModel({
+        ...model,
+        customThinkingLevel: findCustomThinkingLevel(model.thinkingLevelOptions)
+      })
+    );
     draftDefaultModelId.value = settings?.defaultModelId ?? "";
     modelEditor.value = null;
     advancedConfigModel.value = null;
@@ -94,7 +83,7 @@ export function useModelSettingsDraft(
     maxTokens: number;
   }): void {
     const apply = (model: DraftModel): DraftModel => {
-      if (model.managedBy || model.id !== capacity.modelId) return model;
+      if (model.id !== capacity.modelId) return model;
       if (model.contextWindow !== undefined && model.maxTokens !== undefined) {
         return model;
       }
@@ -159,7 +148,7 @@ export function useModelSettingsDraft(
   }
 
   function editModel(model: DraftModel): void {
-    if (props.modelSaving || model.managedBy) return;
+    if (props.modelSaving) return;
     modelEditor.value = {
       ...cloneDraftModel(model),
       apiKey: "",
@@ -201,28 +190,11 @@ export function useModelSettingsDraft(
 
   function removeModel(modelId: string): void {
     if (props.modelSaving || modelEditor.value) return;
-    if (draftModels.value.find((model) => model.id === modelId)?.managedBy) {
-      return;
-    }
     draftModels.value = draftModels.value.filter(
       (model) => model.id !== modelId
     );
     if (draftDefaultModelId.value === modelId) {
-      if (props.modelScope === "custom") {
-        const remainingCustomIds = new Set(
-          draftModels.value.map((model) => model.id)
-        );
-        draftDefaultModelId.value =
-          props.modelSettings?.models.find(
-            (model) =>
-              model.id !== modelId &&
-              (Boolean(model.managedBy) || remainingCustomIds.has(model.id))
-          )?.id ??
-          draftModels.value[0]?.id ??
-          "";
-      } else {
-        draftDefaultModelId.value = draftModels.value[0]?.id ?? "";
-      }
+      draftDefaultModelId.value = draftModels.value[0]?.id ?? "";
     }
     if (advancedConfigModel.value?.id === modelId) {
       advancedConfigModel.value = null;
@@ -231,7 +203,7 @@ export function useModelSettingsDraft(
   }
 
   function openAdvancedConfig(model: DraftModel): void {
-    if (model.managedBy || modelEditor.value) return;
+    if (modelEditor.value) return;
     const cloned = cloneDraftModel(model);
     const tested = settingsStore.lastModelTestCapacity;
     if (
@@ -255,7 +227,7 @@ export function useModelSettingsDraft(
     maxTokens: number;
   }): void {
     const target = advancedConfigModel.value;
-    if (!target || target.managedBy) return;
+    if (!target) return;
     const index = draftModels.value.findIndex(
       (model) => model.id === target.id
     );

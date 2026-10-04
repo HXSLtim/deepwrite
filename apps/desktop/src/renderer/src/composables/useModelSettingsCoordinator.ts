@@ -102,7 +102,6 @@ export function useModelSettingsCoordinator(
       ...(input.modelConfigIds?.length
         ? { modelConfigIds: [...input.modelConfigIds] }
         : {}),
-      ...(input.managedBy ? { managedBy: input.managedBy } : {}),
       ...(input.modules?.length ? { modules: [...input.modules] } : {})
     } satisfies ModelUsageQueryInput;
     const requestSequence = ++modelUsageRequestSequence;

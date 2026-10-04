@@ -2,13 +2,24 @@ import { mkdir, open, readFile, rename, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { randomHex8 } from "@deepwrite/shared";
 import {
-  normalizeDiskModelSettings,
-  type DiskModelSettings
-} from "./free-model-settings-state";
+  ModelConfigInputSchema,
+  type ModelConfigInput
+} from "@deepwrite/contracts";
 
 export interface DiskModelSecrets {
   version: 1;
   encryptedApiKeys: Record<string, string>;
+}
+
+export type DiskModelConfig = Omit<
+  ModelConfigInput,
+  "apiKey" | "clearApiKey" | "sourceApiKeyId"
+>;
+
+export interface DiskModelSettings {
+  version: 2;
+  defaultModelId: string;
+  models: DiskModelConfig[];
 }
 
 export interface ModelConfigState {
@@ -16,8 +27,27 @@ export interface ModelConfigState {
   secrets: DiskModelSecrets;
 }
 
+/**
+ * Legacy disk layouts could contain DeepWrite-managed model entries
+ * (`managedBy: "deepwrite-free" | "deepwrite-official"`) and site-official
+ * gateway entries (id prefix). The managed catalogs are gone, so those
+ * entries are dropped while loading instead of resurfacing as ghosts.
+ */
+const LEGACY_SITE_OFFICIAL_ID_PREFIX = "deepwrite-site-official-";
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function isLegacyManagedModelEntry(raw: unknown): boolean {
+  if (!isRecord(raw)) return false;
+  if (typeof raw.managedBy === "string" && raw.managedBy.length > 0) {
+    return true;
+  }
+  return (
+    typeof raw.id === "string" &&
+    raw.id.startsWith(LEGACY_SITE_OFFICIAL_ID_PREFIX)
+  );
 }
 
 function legacySecrets(raw: unknown): DiskModelSecrets {
@@ -31,6 +61,43 @@ function legacySecrets(raw: unknown): DiskModelSecrets {
           typeof entry[1] === "string" && entry[1].length > 0
       )
     )
+  };
+}
+
+export function toDiskModel(model: ModelConfigInput): DiskModelConfig {
+  const {
+    apiKey: _apiKey,
+    clearApiKey: _clearApiKey,
+    sourceApiKeyId: _sourceApiKeyId,
+    ...identity
+  } = model;
+  return identity;
+}
+
+function normalizeModels(raw: unknown, maximum: number): DiskModelConfig[] {
+  if (!Array.isArray(raw)) return [];
+  const models = new Map<string, DiskModelConfig>();
+  for (const candidate of raw.slice(0, maximum)) {
+    if (isLegacyManagedModelEntry(candidate)) continue;
+    const parsed = ModelConfigInputSchema.safeParse(candidate);
+    if (!parsed.success || models.has(parsed.data.id)) continue;
+    models.set(parsed.data.id, toDiskModel(parsed.data));
+  }
+  return [...models.values()];
+}
+
+/** Reads the legacy v1/v2 settings layouts and the current V3 commit format. */
+export function normalizeDiskModelSettings(raw: unknown): DiskModelSettings {
+  if (!isRecord(raw)) {
+    return { version: 2, defaultModelId: "", models: [] };
+  }
+  return {
+    version: 2,
+    defaultModelId:
+      typeof raw.defaultModelId === "string" && raw.defaultModelId.length <= 120
+        ? raw.defaultModelId
+        : "",
+    models: normalizeModels(raw.models, 100)
   };
 }
 

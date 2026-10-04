@@ -39,24 +39,7 @@ afterEach(async () => {
 });
 
 function createStore(root: string) {
-  const catalog = {
-    revision: "",
-    enabled: false,
-    message: "",
-    manifestAvailable: false,
-    canDeprecateMissingModels: false,
-    defaultModelId: "",
-    models: [],
-    apiKeys: {}
-  };
-  const reader = {
-    initialize: async () => undefined,
-    getCatalog: async () => catalog
-  };
-  return new ModelConfigStore(root, {
-    freeModelCatalog: reader,
-    officialModelCatalog: reader
-  });
+  return new ModelConfigStore(root);
 }
 
 describe("ModelConfigStore draft API keys", () => {

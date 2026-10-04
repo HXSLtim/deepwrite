@@ -207,46 +207,6 @@ describe("ModelUsageStore", () => {
     ]);
   });
 
-  it("filters shared official quota usage by managed model ownership", async () => {
-    const root = await makeTemporaryRoot();
-    const officialModel = model({
-      id: "deepwrite-official-test",
-      provider: "deepseek-official",
-      modelId: "deepseek-official-test",
-      managedBy: "deepwrite-official"
-    });
-    const customModel = model({ id: "custom-test", modelId: "custom-test" });
-    const store = new ModelUsageStore(root);
-
-    await store.syncConfiguredModels([officialModel, customModel]);
-    await store.record(
-      record("official-event", localDate(2026, 6, 1), officialModel)
-    );
-    await store.record(
-      record("custom-event", localDate(2026, 6, 2), customModel, {
-        usage: {
-          inputTokens: 100,
-          outputTokens: 100,
-          cacheReadTokens: 0,
-          cacheWriteTokens: 0,
-          totalTokens: 200
-        }
-      })
-    );
-
-    const dashboard = await store.query({ managedBy: "deepwrite-official" });
-    expect(dashboard.totals.totalTokens).toBe(DEFAULT_USAGE.totalTokens);
-    expect(dashboard.models).toHaveLength(1);
-    expect(dashboard.models[0]?.model).toMatchObject({
-      configId: "deepwrite-official-test",
-      managedBy: "deepwrite-official"
-    });
-    expect(dashboard.recentCalls).toHaveLength(1);
-    expect(dashboard.recentCalls[0]?.model.configId).toBe(
-      "deepwrite-official-test"
-    );
-  });
-
   it("retains 100 details, exposes 50 calls, and preserves older aggregate totals", async () => {
     const root = await makeTemporaryRoot();
     const configuredModel = model();

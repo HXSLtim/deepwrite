@@ -39,9 +39,7 @@ interface DesktopServiceOptions {
 /** Construction has no network dependency; optional refreshes start separately. */
 export function createDesktopServices(options: DesktopServiceOptions) {
   const { userDataPath, command } = options;
-  const modelConfigStore = new ModelConfigStore(userDataPath, {
-    appVersion: options.appVersion
-  });
+  const modelConfigStore = new ModelConfigStore(userDataPath);
   const modelUsageStore = new ModelUsageStore(userDataPath);
   const workspaceDirectoryStore = new WorkspaceDirectoryStore(
     userDataPath,

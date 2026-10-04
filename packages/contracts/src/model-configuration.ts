@@ -89,27 +89,6 @@ export function isDeepSeekWebSearchCompatible(
 export const ToolSchemaProfileSchema = z.enum(["native", "portable"]);
 export type ToolSchemaProfile = z.infer<typeof ToolSchemaProfileSchema>;
 
-export const ModelManagedBySchema = z.enum([
-  "deepwrite-free",
-  "deepwrite-official"
-]);
-export type ModelManagedBy = z.infer<typeof ModelManagedBySchema>;
-
-export const DEEPWRITE_SITE_OFFICIAL_MODEL_ID_PREFIX =
-  "deepwrite-site-official-";
-
-export function isDeepWriteSiteOfficialModel(
-  model: string | { id: string } | { configId: string }
-): boolean {
-  const id =
-    typeof model === "string"
-      ? model
-      : "id" in model
-        ? model.id
-        : model.configId;
-  return id.startsWith(DEEPWRITE_SITE_OFFICIAL_MODEL_ID_PREFIX);
-}
-
 /** Fallback context window for custom models that are not in the runtime catalog. */
 export const DEFAULT_CUSTOM_MODEL_CONTEXT_WINDOW = 272_000;
 /** Fallback max output tokens for custom models that are not in the runtime catalog. */
@@ -155,20 +134,7 @@ const ModelIdentitySchema = z
     /** Optional custom context window in tokens. Must be set together with maxTokens. */
     contextWindow: ModelContextWindowSchema.optional(),
     /** Optional custom max output tokens. Must be set together with contextWindow. */
-    maxTokens: ModelMaxTokensSchema.optional(),
-    /** User visibility toggle for separately managed model catalogs. */
-    enabled: z.boolean().optional(),
-    managedBy: ModelManagedBySchema.optional(),
-    /** Remote official-catalog availability: 0 = available, 1 = unavailable. */
-    status: z.union([z.literal(0), z.literal(1)]).optional(),
-    /** Current billing multiplier (for example 0.65 means 6.5折). */
-    discount: z.number().finite().positive().max(1).optional(),
-    /** Official input price in CNY per million tokens. */
-    input: z.number().finite().nonnegative().optional(),
-    /** Official output price in CNY per million tokens. */
-    output: z.number().finite().nonnegative().optional(),
-    /** Official cache price in CNY per million tokens. */
-    cache: z.number().finite().nonnegative().optional()
+    maxTokens: ModelMaxTokensSchema.optional()
   })
   .superRefine((value, context) => {
     if (!value.reasoning && value.defaultThinkingLevel !== "off") {

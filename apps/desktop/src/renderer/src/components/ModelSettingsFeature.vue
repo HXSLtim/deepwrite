@@ -77,9 +77,7 @@ const { modelProviderGroups, expandedProviders, toggleProvider } =
   useModelProviderGroups(modelConfigRows);
 const knownUserProviders = computed(() =>
   collectUserProviderIds(
-    draftModels.value
-      .filter((model) => !model.managedBy)
-      .map((model) => model.provider),
+    draftModels.value.map((model) => model.provider),
     builtinProviderSets(MODEL_PROVIDER_OPTIONS).values
   )
 );
@@ -233,7 +231,6 @@ const knownUserProviders = computed(() =>
                       }}
                     </button>
                     <button
-                      v-if="!row.model.managedBy"
                       type="button"
                       :disabled="modelSaving"
                       @click="editModel(row.model)"
@@ -253,7 +250,6 @@ const knownUserProviders = computed(() =>
                       }}
                     </button>
                     <button
-                      v-if="!row.model.managedBy"
                       type="button"
                       :disabled="modelSaving || Boolean(modelEditor)"
                       :title="t('configureContextLengthAndMaximumOutputLength')"
@@ -262,7 +258,6 @@ const knownUserProviders = computed(() =>
                       {{ t("advancedSettings") }}
                     </button>
                     <button
-                      v-if="!row.model.managedBy"
                       class="is-danger"
                       type="button"
                       :disabled="modelSaving || Boolean(modelEditor)"

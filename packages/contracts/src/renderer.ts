@@ -107,7 +107,6 @@ export {
   resolveMaterialMetadata
 } from "./material-markdown";
 export { updateMaterialMarkdownMetadata } from "./material-markdown-edit";
-export { isDeepWriteSiteOfficialModel } from "./models";
 export {
   APPEARANCE_CUSTOM_FONT_DISPLAY_NAME_MAX_LENGTH,
   APPEARANCE_CUSTOM_FONT_MAX_COUNT,

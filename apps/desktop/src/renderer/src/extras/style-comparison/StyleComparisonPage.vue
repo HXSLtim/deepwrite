@@ -30,9 +30,7 @@ watch(
     if (busy) materialsOpen.value = false;
   }
 );
-const availableModels = computed(() =>
-  props.models.filter((model) => model.enabled !== false)
-);
+const availableModels = computed(() => [...props.models]);
 watch(
   () =>
     [availableModels.value, props.preferredModelId, comparison.isBusy] as const,

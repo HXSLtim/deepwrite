@@ -72,14 +72,7 @@ const budgetSelectOptions = computed(() =>
 );
 
 const modelOptions = computed(() => {
-  const settings = props.modelSettings;
-  const enabledFree = new Set(settings?.deepwriteFreeEnabledModelIds ?? []);
-  const models = [
-    ...(settings?.models ?? []),
-    ...(settings?.deepwriteFreeModels ?? []).filter((model) =>
-      enabledFree.has(model.id)
-    )
-  ];
+  const models = [...(props.modelSettings?.models ?? [])];
   const options = [
     {
       value: FOLLOW_RUN_MODEL,

@@ -63,12 +63,7 @@ function remoteCandidate(record: Record<string, unknown>, id: string) {
       "max_tokens",
       "max_output_tokens",
       "outputTokenLimit"
-    ),
-    status: record.status,
-    discount: record.discount,
-    input: record.input,
-    output: record.output,
-    cache: record.cache
+    )
   };
 }
 

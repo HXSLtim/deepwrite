@@ -1,4 +1,3 @@
-import { siteOfficialModelsApi } from "./site-official-models-api";
 import {
   ModelCapacityResultSchema,
   ModelConfigInputSchema,
@@ -7,7 +6,6 @@ import {
   ModelSettingsSchema,
   ModelUsageDashboardSchema,
   ModelUsageQueryInputSchema,
-  OfficialModelBalanceSchema,
   RemoteModelListInputSchema,
   RemoteModelListResultSchema,
   SessionAbortAcceptedPayloadSchema,
@@ -110,97 +108,6 @@ export async function listModels(): Promise<ModelSettings> {
   );
 }
 
-export async function refreshFreeModels(): Promise<ModelSettings> {
-  const id = browserId("cmd_models_refresh_free");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope("models.refreshFree", {}, { id, correlationId: id })
-    )
-  );
-}
-
-export async function setFreeModelEnabled(
-  modelId: string,
-  enabled: boolean
-): Promise<ModelSettings> {
-  const id = browserId("cmd_models_set_free_enabled");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope(
-        "models.setFreeModelEnabled",
-        { modelId, enabled },
-        { id, correlationId: id }
-      )
-    )
-  );
-}
-
-export async function refreshOfficialModels(): Promise<ModelSettings> {
-  const id = browserId("cmd_models_refresh_official");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope("models.refreshOfficial", {}, { id, correlationId: id })
-    )
-  );
-}
-
-export async function queryOfficialModelBalance() {
-  const id = browserId("cmd_models_query_official_balance");
-  return OfficialModelBalanceSchema.parse(
-    await invokeCommand(
-      createEnvelope(
-        "models.queryOfficialBalance",
-        {},
-        { id, correlationId: id }
-      )
-    )
-  );
-}
-
-export async function saveOfficialModelToken(
-  rawApiKey: string
-): Promise<ModelSettings> {
-  const apiKey = rawApiKey.trim();
-  if (!apiKey || apiKey.length > 16_000) {
-    throw new Error("请输入有效的官方令牌。");
-  }
-  const id = browserId("cmd_models_save_official_token");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope(
-        "models.saveOfficialToken",
-        { apiKey },
-        { id, correlationId: id }
-      )
-    )
-  );
-}
-
-export async function clearOfficialModelToken(): Promise<ModelSettings> {
-  const id = browserId("cmd_models_clear_official_token");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope("models.clearOfficialToken", {}, { id, correlationId: id })
-    )
-  );
-}
-
-export async function setOfficialModelEnabled(
-  modelId: string,
-  enabled: boolean
-): Promise<ModelSettings> {
-  const id = browserId("cmd_models_set_official_enabled");
-  return ModelSettingsSchema.parse(
-    await invokeCommand<ModelSettings>(
-      createEnvelope(
-        "models.setOfficialModelEnabled",
-        { modelId, enabled },
-        { id, correlationId: id }
-      )
-    )
-  );
-}
-
 export async function saveModels(
   rawSettings: ModelSettingsInput
 ): Promise<ModelSettings> {
@@ -273,14 +180,6 @@ export const session: DeepWriteApi["session"] = {
 
 export const models: DeepWriteApi["models"] = {
   list: listModels,
-  refreshFree: refreshFreeModels,
-  setFreeModelEnabled,
-  refreshOfficial: refreshOfficialModels,
-  queryOfficialBalance: queryOfficialModelBalance,
-  saveOfficialToken: saveOfficialModelToken,
-  clearOfficialToken: clearOfficialModelToken,
-  ...siteOfficialModelsApi,
-  setOfficialModelEnabled,
   save: saveModels,
   test: testModel,
   resolveCapacity: resolveModelCapacity,

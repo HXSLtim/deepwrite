@@ -113,7 +113,7 @@ export function createStyleComparisonController(options: Options) {
       options.notifyError(t("agentUnavailable"));
       return;
     }
-    if (!model || model.enabled === false) {
+    if (!model) {
       options.notifyError(t("configureAvailableModel"));
       return;
     }

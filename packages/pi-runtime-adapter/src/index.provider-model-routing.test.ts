@@ -524,7 +524,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
       defaultThinkingLevel: "high",
       thinkingLevelOptions: ["low", "high", "max"],
       temperatureOptions: [0.7, 1, 1.5],
-      managedBy: "deepwrite-official",
       apiKey: "test-only"
     };
 
@@ -551,7 +550,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
       defaultThinkingLevel: "high",
       thinkingLevelOptions: ["low", "high", "max"],
       temperatureOptions: [0.7, 1, 1.5],
-      managedBy: "deepwrite-official",
       apiKey: "test-only"
     };
 
@@ -609,7 +607,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
       defaultThinkingLevel: "high",
       thinkingLevelOptions: ["low", "high", "max"],
       temperatureOptions: [0.7, 1, 1.5],
-      managedBy: "deepwrite-official",
       apiKey: "test-only"
     };
 
@@ -654,7 +651,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
         defaultThinkingLevel: "high",
         thinkingLevelOptions: ["low", "high", "max"],
         temperatureOptions: [0.7, 1, 1.5],
-        managedBy: "deepwrite-official",
         apiKey: "test-only"
       };
 
@@ -706,7 +702,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
         defaultThinkingLevel: "high",
         thinkingLevelOptions: ["low", "high", "max"],
         temperatureOptions: [0.7, 1, 1.5],
-        managedBy: "deepwrite-official",
         apiKey: "test-only"
       };
 
@@ -749,7 +744,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
       defaultThinkingLevel: "max",
       thinkingLevelOptions: ["low", "high", "max"],
       temperatureOptions: [0.7, 1, 1.5],
-      managedBy: "deepwrite-official",
       apiKey: "test-only"
     };
 
@@ -851,7 +845,6 @@ describe("DeepWrite Pi runtime adapter: provider-model-routing", () => {
         defaultThinkingLevel: "high",
         thinkingLevelOptions: ["low", "high", "max"],
         temperatureOptions: [0.7, 1, 1.5],
-        managedBy: "deepwrite-official",
         apiKey: "test-only"
       };
 

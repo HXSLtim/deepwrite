@@ -4,7 +4,6 @@ import { BookTemplateCommandSchemas } from "./book-templates";
 import { VoiceCommandSchemas } from "./voice";
 import { StorageSettingsCommandSchemas } from "./storage-settings";
 import { ConversationExportCommandEnvelopeSchemas } from "./conversation-export";
-import { SiteOfficialModelCommandSchemas } from "./site-official-models";
 import { DeviceSyncWorkspaceCommandEnvelopeSchema } from "./device-sync-commands";
 import { AgentTeamsSaveBuiltinsCommandEnvelopeSchema } from "./builtin-subagents";
 import { CatalogQueryLibraryManagementCommandEnvelopeSchema } from "./library-management";
@@ -97,14 +96,7 @@ import {
 import {
   AgentModelCapacityCommandEnvelopeSchema,
   AgentModelTestCommandEnvelopeSchema,
-  ModelsClearOfficialTokenCommandEnvelopeSchema,
-  ModelsSetOfficialModelEnabledCommandEnvelopeSchema,
   ModelsListCommandEnvelopeSchema,
-  ModelsQueryOfficialBalanceCommandEnvelopeSchema,
-  ModelsRefreshFreeCommandEnvelopeSchema,
-  ModelsSetFreeModelEnabledCommandEnvelopeSchema,
-  ModelsRefreshOfficialCommandEnvelopeSchema,
-  ModelsSaveOfficialTokenCommandEnvelopeSchema,
   ModelsSaveCommandEnvelopeSchema,
   ModelsTestCommandEnvelopeSchema,
   ModelsResolveCapacityCommandEnvelopeSchema,
@@ -275,14 +267,6 @@ export const CommandEnvelopeSchema = z.discriminatedUnion("type", [
   SessionAbortCommandEnvelopeSchema,
   SessionUserInputResponseCommandEnvelopeSchema,
   ModelsListCommandEnvelopeSchema,
-  ModelsQueryOfficialBalanceCommandEnvelopeSchema,
-  ModelsRefreshFreeCommandEnvelopeSchema,
-  ModelsSetFreeModelEnabledCommandEnvelopeSchema,
-  ModelsRefreshOfficialCommandEnvelopeSchema,
-  ModelsSaveOfficialTokenCommandEnvelopeSchema,
-  ModelsClearOfficialTokenCommandEnvelopeSchema,
-  ...SiteOfficialModelCommandSchemas,
-  ModelsSetOfficialModelEnabledCommandEnvelopeSchema,
   ModelsSaveCommandEnvelopeSchema,
   ModelsTestCommandEnvelopeSchema,
   ModelsResolveCapacityCommandEnvelopeSchema,

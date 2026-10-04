@@ -45,8 +45,8 @@ describe("ModelSettingsFeature DeepWrite free models", () => {
     expect(source).not.toContain('emit("refreshFreeModels")');
   });
 
-  it("renders managed models as read-only cards with default and test actions", () => {
-    expect(featureSource).toContain('v-if="!row.model.managedBy"');
+  it("renders every model card with default and test actions", () => {
+    expect(featureSource).not.toContain("row.model.managedBy");
     expect(featureSource).toContain("setDefaultModel(row.model.id)");
     expect(featureSource).toContain("testDraftModel(row.model)");
   });
@@ -170,8 +170,8 @@ describe("ModelSettingsFeature provider presets", () => {
 });
 
 describe("ModelSettingsFeature managed models", () => {
-  it("keeps managed models selectable but hides edit and delete actions", () => {
-    expect(source).toContain('v-if="!row.model.managedBy"');
+  it("keeps every model editable with remote request ids preserved", () => {
+    expect(source).not.toContain("row.model.managedBy");
     expect(source).toContain("requestModelId: model.requestModelId");
     expect(source).toContain(
       "supportsDeveloperRole: model.supportsDeveloperRole"
@@ -230,8 +230,8 @@ describe("ModelSettingsFeature model draft lifecycle", () => {
     );
   });
 
-  it("filters managed models and free-provider options in custom scope", () => {
-    expect(source).toContain('props.modelScope === "all" || !model.managedBy');
+  it("drops free-provider options from the custom scope", () => {
+    expect(source).not.toContain("model.managedBy");
     expect(providerLabel("deepwrite-free")).toBeUndefined();
     expectSourceToContain(source, "noCustomModelsConfigured");
   });
@@ -266,7 +266,6 @@ describe("ModelSettingsFeature advanced capacity", () => {
     expect(deleteIndex).toBeGreaterThan(advancedIndex);
     expect(featureSource).toContain('@click="openAdvancedConfig(row.model)"');
     expect(featureSource).toContain("<ModelAdvancedConfigDialog");
-    expect(source).toContain('v-if="!row.model.managedBy"');
   });
 
   it("opens a dialog for context window and max output tokens", () => {
@@ -287,9 +286,7 @@ describe("ModelSettingsFeature advanced capacity", () => {
     expect(draftSource).toContain("settingsStore.lastModelTestCapacity");
     expect(draftSource).toContain("tested.modelId === cloned.id");
     expect(draftSource).toContain("applyCapacityDefaults(capacity)");
-    expect(draftSource).toContain(
-      "model.managedBy || model.id !== capacity.modelId"
-    );
+    expect(draftSource).toContain("model.id !== capacity.modelId");
     expect(draftSource).toContain("contextWindow: capacity.contextWindow");
     expect(draftSource).toContain("maxTokens: capacity.maxTokens");
     expect(draftSource).toContain("submitModelSettings();");

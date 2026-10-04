@@ -85,13 +85,7 @@ export async function buildChatRuntimeSnapshot(
       defaultThinkingLevel: model.defaultThinkingLevel,
       thinkingLevelOptions: model.thinkingLevelOptions,
       temperatureOptions: model.temperatureOptions,
-      credentialConfigured: model.hasApiKey,
-      ...(model.managedBy ? { managedBy: model.managedBy } : {}),
-      ...(model.status !== undefined ? { status: model.status } : {}),
-      ...(model.discount !== undefined ? { discount: model.discount } : {}),
-      ...(model.input !== undefined ? { input: model.input } : {}),
-      ...(model.output !== undefined ? { output: model.output } : {}),
-      ...(model.cache !== undefined ? { cache: model.cache } : {})
+      credentialConfigured: model.hasApiKey
     })),
     defaultModelId: modelSettings.defaultModelId,
     usage: {

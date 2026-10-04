@@ -4,7 +4,6 @@ import { LongBookSummarySchema } from "./long-workspace";
 import { ModelUsageDashboardSchema } from "./model-usage";
 import {
   ModelApiSchema,
-  ModelManagedBySchema,
   TemperatureOptionsSchema,
   ThinkingLevelOptionsSchema,
   ThinkingLevelSchema
@@ -38,13 +37,7 @@ export const ChatAssistantModelConfigSchema = z
     defaultThinkingLevel: ThinkingLevelSchema,
     thinkingLevelOptions: ThinkingLevelOptionsSchema,
     temperatureOptions: TemperatureOptionsSchema,
-    credentialConfigured: z.boolean(),
-    managedBy: ModelManagedBySchema.optional(),
-    status: z.union([z.literal(0), z.literal(1)]).optional(),
-    discount: z.number().finite().positive().max(1).optional(),
-    input: z.number().finite().nonnegative().optional(),
-    output: z.number().finite().nonnegative().optional(),
-    cache: z.number().finite().nonnegative().optional()
+    credentialConfigured: z.boolean()
   })
   .strict();
 export type ChatAssistantModelConfig = z.infer<

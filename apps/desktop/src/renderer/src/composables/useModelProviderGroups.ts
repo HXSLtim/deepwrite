@@ -15,7 +15,7 @@ export function useModelProviderGroups(rows: Ref<ModelConfigRow[]>) {
       if (row.type === "model") {
         const model = row.model;
         currentModelId = model.id;
-        const key = `${model.managedBy ?? "custom"}:${model.provider}`;
+        const key = `custom:${model.provider}`;
         currentGroup = groups.get(key);
         if (!currentGroup) {
           const label =
