@@ -78,3 +78,7 @@
 - `apps/desktop/src/renderer/src/`：`GeneralSettingsPanel.vue`、`ConversationComposer.vue`、`useConversationModelOptions.ts`、`agent-conversation/run-settings.ts`、`useProposalCoordinator.ts`、`useLongWorkspaceProposals.ts`、proposal lanes、`LongProposalReview.vue`、`ConversationMessageItem.vue`、`conversationToolPresentation.ts`、`conversationWorkGroups.ts`、`conversationDisclosureState.ts`、`ConversationProcessingTimeline.vue`
 - `packages/pi-runtime-adapter/src/`：`long-agent-tools/context.ts`、`library-agent-tools/mutations.ts`、短篇 `unified-proposal.ts`（仅文案分支）
 - i18n 中英文案若干
+
+## 修订（2026-10-04，用户验收反馈）
+
+§4.5 streaming 收起语义升级为**整体收起**：streaming 期间处理块默认收起为一行（运行时钟 + 展开按钮），会话默认只显示 AI 文字回复；点开后展示原 live 列表（内层"已完成 N 项"折叠与单工具详情展开沿用当前设计）。审批待决卡与失败项保留在收起容器外可见。原"仅折叠已完成项"（splitLiveCollapsedItems 顶层语义）由"整体收起"取代，该函数降级为展开视图的内层折叠。消息结束后的"已处理 X 秒"收起与手动展开重置行为不变。
